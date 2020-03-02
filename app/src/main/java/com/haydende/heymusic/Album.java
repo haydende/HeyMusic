@@ -8,7 +8,7 @@ import androidx.room.ForeignKey;
 
 import static androidx.room.ForeignKey.CASCADE;
 
-@Entity(tableName = "Album")
+@Entity(tableName = "AlbumTable")
 public class Album {
 
     @PrimaryKey

@@ -8,7 +8,7 @@ import androidx.room.ForeignKey;
 
 import static androidx.room.ForeignKey.CASCADE;
 
-@Entity(tableName = "Song")
+@Entity(tableName = "SongTable")
 public class Song {
 
     @PrimaryKey
@@ -23,6 +23,9 @@ public class Song {
 
     @ColumnInfo(name = "TrackNo")
     private Integer trackNo; // track number within its album
+
+    @ColumnInfo(name = "Title")
+    private String title; // track title
 
     @ColumnInfo(name = "Genre")
     private String genre; // what genre is the track?
