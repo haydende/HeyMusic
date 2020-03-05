@@ -11,7 +11,7 @@ import static androidx.room.ForeignKey.CASCADE;
 @Entity(tableName = "Album")
 public class Album {
 
-    @PrimaryKey
+    @PrimaryKey(autoGenerate = true)
     @NonNull
     @ColumnInfo(name = "AlbumID")
     private Integer albumID;
@@ -27,11 +27,31 @@ public class Album {
     @ColumnInfo(name = "YearOfRelease")
     private Integer yearOfRelease;
 
-    public Album (String artistName, String title, Integer yearOfRelease) {
+    public Album (Integer artistID, String title, Integer yearOfRelease) {
+        this.artistID = artistID;
         this.title = title;
         this.yearOfRelease = yearOfRelease;
         // TODO: Implement artistName to artistID
         // TODO: Implement albumID generation
     }
 
+    public Integer getAlbumID() {
+        return albumID;
+    }
+
+    public Integer getArtistID() {
+        return artistID;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public Integer getYearOfRelease() {
+        return yearOfRelease;
+    }
+
+    public void setAlbumID(@NonNull Integer albumID) {
+        this.albumID = albumID;
+    }
 }

@@ -36,8 +36,9 @@ public class Song {
     @ColumnInfo(name = "Duration")
     private Integer duration; // song duration in seconds
 
-    public Song(String albumName, int trackNo, String genre, String fileFormat, String filepath,
+    public Song(Integer albumID, int trackNo, String genre, String fileFormat, String filepath,
                 Integer duration) {
+        this.albumID = albumID;
         this.trackNo = trackNo;
         this.genre = genre;
         this.fileFormat = fileFormat;
@@ -47,5 +48,36 @@ public class Song {
         // TODO: Implement songID generation
     }
 
+    @NonNull
+    public Integer getSongID() {
+        return songID;
+    }
 
+    public Integer getAlbumID() {
+        return albumID;
+    }
+
+    public Integer getTrackNo() {
+        return trackNo;
+    }
+
+    public String getGenre() {
+        return genre;
+    }
+
+    public String getFileFormat() {
+        return fileFormat;
+    }
+
+    public String getFilepath() {
+        return filepath;
+    }
+
+    public Integer getDuration() {
+        return duration;
+    }
+
+    public void setSongID(@NonNull Integer songID) {
+        this.songID = songID;
+    }
 }

@@ -8,7 +8,7 @@ import androidx.room.PrimaryKey;
 @Entity(tableName = "Artist")
 public class Artist {
 
-    @PrimaryKey
+    @PrimaryKey(autoGenerate = true)
     @NonNull
     @ColumnInfo(name = "ArtistID")
     private Integer artistID;
@@ -19,5 +19,17 @@ public class Artist {
     public Artist (String name) {
         this.name = name;
         // TODO: Implement artistID generation
+    }
+
+    public void setArtistID(Integer id) {
+        artistID = id;
+    }
+
+    public Integer getArtistID() {
+        return artistID;
+    }
+
+    public String getName() {
+        return name;
     }
 }
