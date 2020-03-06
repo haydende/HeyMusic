@@ -45,8 +45,10 @@ public abstract class MusicDatabase extends RoomDatabase {
 
             System.out.println("Here");
             databaseWriteExecutor.execute(() -> {
-               AlbumDAO albumDAO = instance.albumDao();
-               albumDAO.insert(new Album(1, "title", 1299));
+                AlbumDAO albumDAO = instance.albumDao();
+                albumDAO.deleteAll();
+                albumDAO.insert(new Album(1, "title", 1299));
+                albumDAO.insert(new Album(2, "Another Title", 2020));
             });
         }
     };

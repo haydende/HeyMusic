@@ -59,9 +59,7 @@ public class GridActivity extends AppCompatActivity {
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new GridLayoutManager(this, 4));
 
-        mDB = MusicDatabase.getInstance(this);
-
-
+        // mDB = MusicDatabase.getInstance(this);
 
         // Using this to find out if any items *should* appear
 

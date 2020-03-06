@@ -10,15 +10,18 @@
     <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:padding="8dp">
+        android:padding="1dp">
 
         <ImageButton
             android:id="@+id/image"
+            android:minHeight="85dp"
+            android:minWidth="85dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
         </ImageButton>
         <TextView
             android:id="@+id/text"
+            android:text="Placeholder"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
         </TextView>
