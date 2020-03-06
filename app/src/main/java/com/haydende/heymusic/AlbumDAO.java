@@ -4,44 +4,63 @@ import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
 import androidx.room.Insert;
 import androidx.room.Query;
-import androidx.room.Update;
+import androidx.room.OnConflictStrategy;
 
 import java.util.List;
 
-import androidx.room.Dao;
-import androidx.room.Insert;
-import androidx.room.OnConflictStrategy;
-import androidx.room.Query;
-
-import java.util.ArrayList;
-
+/**
+ * Data Access Object for the Album table.
+ * <p>Room generates classes for implementing the methods below.</p>
+ */
 @Dao
 public interface AlbumDAO {
 
-    @Query("SELECT * FROM AlbumTable")
-    LiveData<List<Album>> getAlbumList();
-
+    /**
+     * Method for inserting a new Album entry.
+     */
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    public void insert(Album a);
+    void insert(Album a);
 
-    @Update
-    void update(Album a);
-
+    /**
+     * Method for executing <code>DELETE</code> query.
+     */
     @Query("DELETE FROM AlbumTable")
-    public void deleteAll();
+    void deleteAll();
 
+    /**
+     * Method for getting all Album entries.
+     * @return <code>List</code> of <code>Album</code> objects.
+     */
     @Query("SELECT * FROM AlbumTable")
-    public LiveData<List<Album>> getAll();
+    LiveData<List<Album>> getAll();
 
+    /**
+     * Method for getting all Album entries (Ascending order for Title field).
+     * @return <code>List</code> of <code>Album</code> objects.
+     */
     @Query("SELECT * FROM AlbumTable ORDER BY title ASC")
-    public LiveData<List<Album>> getAllByNameAsc();
+    LiveData<List<Album>> getAllByNameAsc();
 
+    /**
+     * Method for getting all Album entries (Descending order for Title field).
+     * @return <code>List</code> of <code>Album</code> objects.
+     */
     @Query("SELECT * FROM AlbumTable ORDER BY title DESC")
-    public LiveData<List<Album>> getAllByNameDesc();
+    LiveData<List<Album>> getAllByNameDesc();
 
-    @Query("SELECT * FROM AlbumTable WHERE AlbumID = :albumID")
-    public Album getAlbum(Integer albumID);
-
+    /**
+     * Method for getting a certain Album by matching Title.
+     * @param title Title to search for
+     * @return <code>Album</code> object
+     */
     @Query("SELECT * FROM AlbumTable WHERE Title = :title")
-    public Album getAlbum(String title);
+    Album getAlbum(String title);
+
+    /**
+     * Method for getting a certain Album by matching AlbumID.
+     * @param albumID AlbumID to search for
+     * @return <code>Album</code> object
+     */
+    @Query("SELECT * FROM AlbumTable WHERE AlbumID = :albumID")
+    Album getAlbum(Integer albumID);
 }

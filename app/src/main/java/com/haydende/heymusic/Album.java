@@ -8,6 +8,10 @@ import androidx.room.ForeignKey;
 
 import static androidx.room.ForeignKey.CASCADE;
 
+/**
+ * Class for modelling Albums.
+ * <p>Uses @Database annotation so it can be established as a Room Persistence Library Database.</p>
+ */
 @Entity(tableName = "AlbumTable")
 public class Album {
 
@@ -27,6 +31,12 @@ public class Album {
     @ColumnInfo(name = "YearOfRelease")
     private Integer yearOfRelease;
 
+    /**
+     * Default constructor for this class. Assigns the following...
+     * @param artistID Unique identifier for database entry
+     * @param title Title of the album
+     * @param yearOfRelease Year of album's release
+     */
     public Album (Integer artistID, String title, Integer yearOfRelease) {
         this.artistID = artistID;
         this.title = title;
@@ -35,22 +45,42 @@ public class Album {
         // TODO: Implement albumID generation
     }
 
+    /**
+     * Getter for AlbumID field.
+     * @return <code>albumID</code>
+     */
     public Integer getAlbumID() {
         return albumID;
     }
 
+    /**
+     * Getter for ArtistID field.
+     * @return <code>artistID</code>
+     */
     public Integer getArtistID() {
         return artistID;
     }
 
+    /**
+     * Getter for Title field.
+     * @return <code>title</code>
+     */
     public String getTitle() {
         return title;
     }
 
+    /**
+     * Getter for YearOfRelease field.
+     * @return <code>yearOfRelease</code>
+     */
     public Integer getYearOfRelease() {
         return yearOfRelease;
     }
 
+    /**
+     * Setter for AlbumID field.
+     * @param albumID ID for this Album entry
+     */
     public void setAlbumID(@NonNull Integer albumID) {
         this.albumID = albumID;
     }
