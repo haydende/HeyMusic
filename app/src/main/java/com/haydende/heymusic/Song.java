@@ -39,10 +39,11 @@ public class Song {
     @ColumnInfo(name = "Duration")
     private Integer duration; // song duration in seconds
 
-    public Song(Integer albumID, int trackNo, String genre, String fileFormat, String filepath,
+    public Song(Integer albumID, int trackNo, String title, String genre, String fileFormat, String filepath,
                 Integer duration) {
         this.albumID = albumID;
         this.trackNo = trackNo;
+        this.title = title;
         this.genre = genre;
         this.fileFormat = fileFormat;
         this.filepath = filepath;
@@ -59,6 +60,8 @@ public class Song {
     public Integer getAlbumID() {
         return albumID;
     }
+
+    public String getTitle() { return title; }
 
     public Integer getTrackNo() {
         return trackNo;

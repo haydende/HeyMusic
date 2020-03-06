@@ -18,6 +18,7 @@ public abstract class MusicDatabase extends RoomDatabase {
     private static final String DBNAME = "MusicDB";
     private static MusicDatabase instance;
     private static final int NUM_THREADS = 4;
+    static final ExecutorService databaseWriteExecutor = Executors.newFixedThreadPool(NUM_THREADS);
 
     public abstract ArtistDAO artistDao();
 
@@ -39,24 +40,14 @@ public abstract class MusicDatabase extends RoomDatabase {
 
     private static RoomDatabase.Callback roomCallback = new RoomDatabase.Callback() {
 
-        public void onCreate(@NonNull SupportSQLiteDatabase db) {
-            super.onCreate(db);
-            new PopulateDBAsyncTask(instance).execute();
+        public void onOpen(@NonNull SupportSQLiteDatabase db) {
+            super.onOpen(db);
+
+            System.out.println("Here");
+            databaseWriteExecutor.execute(() -> {
+               AlbumDAO albumDAO = instance.albumDao();
+               albumDAO.insert(new Album(1, "title", 1299));
+            });
         }
     };
-
-    private static class PopulateDBAsyncTask extends AsyncTask<Void, Void, Void> {
-        private AlbumDAO albumDAO;
-
-        private PopulateDBAsyncTask(MusicDatabase db) {
-            albumDAO = db.albumDao();
-
-        }
-
-        protected Void doInBackground(Void... voids) {
-            albumDAO.insert(new Album(2, "title", 1999));
-            return null;
-        }
-    }
-
 }

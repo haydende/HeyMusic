@@ -6,6 +6,7 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class MusicViewModel extends AndroidViewModel {
@@ -28,6 +29,7 @@ public class MusicViewModel extends AndroidViewModel {
     }
 
     public LiveData<List<Album>> getAllAlbums() {
+        System.out.println("ViewModel: " + allAlbums.getValue());
         return allAlbums;
     }
 }

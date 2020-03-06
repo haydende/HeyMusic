@@ -1,5 +1,6 @@
 package com.haydende.heymusic;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
@@ -8,9 +9,12 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Context;
 import android.content.Intent;
 import android.media.Image;
 import android.os.Bundle;
+import android.text.Layout;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.GridLayout;
@@ -40,20 +44,26 @@ public class GridActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mDB = MusicDatabase.getInstance(this);
+        final AlbumListAdapter adapter = new AlbumListAdapter(this);
+
+        MusicViewModel mVM = ViewModelProviders.of(this).get(MusicViewModel.class);
+        mVM.getAllAlbums().observe(this, new Observer<List<Album>>() {
+
+            public void onChanged(@Nullable final List<Album> albums) {
+                // update cached copy of data
+                adapter.setAlbums(albums);
+            }
+        });
 
         RecyclerView recyclerView = findViewById(R.id.recycler_view);
+        recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new GridLayoutManager(this, 4));
-        recyclerView.setHasFixedSize(true);
 
-        final AlbumAdapter adapter = new AlbumAdapter();
-        recyclerView.setAdapter(new AlbumAdapter());
+        mDB = MusicDatabase.getInstance(this);
 
-        musicViewModel = ViewModelProviders.of(this).get(MusicViewModel.class);
-        musicViewModel.getAllAlbums().observe(this, albums -> adapter.setAlbums(albums));
+
 
         // Using this to find out if any items *should* appear
-        System.out.println(adapter.getItemCount());
 
         /*
         // iterate through all elements of ImageButton array
