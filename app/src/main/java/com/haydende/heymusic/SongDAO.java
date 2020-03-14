@@ -16,8 +16,8 @@ import java.util.List;
 public interface SongDAO {
 
     /**
-     * Method for inserting a new Song entry.
-     * @param s Song object to insert
+     * Method for inserting a new <code>Song</code> entry.
+     * @param s <code>Song</code> object to insert
      */
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insert(Song s);
@@ -29,28 +29,28 @@ public interface SongDAO {
     void deleteAll();
 
     /**
-     * Method for getting all Song entries.
+     * Method for getting all <code>Song</code> entries.
      * @return <code>List</code> of <code>Song</code> objects.
      */
     @Query("SELECT * FROM SongTable")
     LiveData<List<Song>> getAll();
 
     /**
-     * Method for getting all Song entries (Ascending order for Title field).
+     * Method for getting all <code>Song</code> entries (Ascending order for Title field).
      * @return <code>List</code> of <code>Song</code> objects.
      */
     @Query("SELECT * FROM SongTable ORDER BY title ASC")
     LiveData<List<Song>> getAllByNameAsc();
 
     /**
-     * Method for getting all Song entries (Descending order for Title field).
+     * Method for getting all <code>Song</code> entries (Descending order for Title field).
      * @return <code>List</code> of <code>Song</code> objects.
      */
     @Query("SELECT * FROM SongTable ORDER BY title DESC")
     LiveData<List<Song>> getAllByNameDesc();
 
     /**
-     * Method for getting a certain Song by matching Title.
+     * Method for getting a certain <code>Song</code> by matching Title.
      * @param title Title to search for
      * @return <code>Song</code> object
      */
@@ -58,7 +58,7 @@ public interface SongDAO {
     Song getSong(String title);
 
     /**
-     * Method for getting a certain Song by matching SongID.
+     * Method for getting a certain <code>Song</code> by matching SongID.
      * @param songID SongID to search for
      * @return <code>Song</code> object
      */
