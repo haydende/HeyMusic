@@ -91,12 +91,20 @@ public abstract class MusicDatabase extends RoomDatabase {
         public void onOpen(@NonNull SupportSQLiteDatabase db) {
             super.onOpen(db);
 
-            System.out.println("Here");
             databaseWriteExecutor.execute(() -> {
+                // Initialise the DAOs
+                ArtistDAO artistDAO = instance.artistDao();
                 AlbumDAO albumDAO = instance.albumDao();
+                SongDAO songDAO = instance.songDao();
+
+                // Wipe the DB so nothing deleted when the app was closed remains
                 albumDAO.deleteAll();
-                albumDAO.insert(new Album(1, "title", 1299));
-                albumDAO.insert(new Album(2, "Another Title", 2020));
+
+                // Insert new instance of Album to the database. Should show in the GridActivity.
+                albumDAO.insert(new Album(1, "Title", 2020));
+
+                // TODO: Call method for collecting data from MediaStore
+
             });
         }
     };

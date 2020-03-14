@@ -30,7 +30,6 @@ import java.util.concurrent.Executors;
 public class GridActivity extends AppCompatActivity {
 
     private ImageButton [] imgBtnArr = new ImageButton[20];
-    private MusicViewModel musicViewModel;
     public GridLayout grid;
 
     // public declaration to make it accessible in all threads
@@ -59,29 +58,5 @@ public class GridActivity extends AppCompatActivity {
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new GridLayoutManager(this, 4));
 
-        // mDB = MusicDatabase.getInstance(this);
-
-        // Using this to find out if any items *should* appear
-
-        /*
-        // iterate through all elements of ImageButton array
-        for (int i = 0; i < 3; i++) {
-            // Fill space with new instance of ImageButton
-            imgBtnArr[i] = new ImageButton(this);
-            // Set a Layout Parameter to the ImageButton
-            imgBtnArr[i].setLayoutParams(new ViewGroup.LayoutParams(250, 250));
-            // Add onClickListener to take user to AlbumView
-            imgBtnArr[i].setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    // Intent albumView = new Intent(((ImageButton)v).getContext(), AlbumActivity.class);
-                    // startActivity(albumView);
-                }
-            });
-            // Add the ImageButton to the GridLayout
-            recyclerView.addView(imgBtnArr[i]);
-            i++;
-        }
-        */
     }
 }

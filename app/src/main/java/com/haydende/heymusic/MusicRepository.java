@@ -28,9 +28,19 @@ public class MusicRepository {
     private SongDAO songDAO;
 
     /**
+     * <code<LiveData</code> of a <code>List</code> of <code>Artist</code> objects.
+     */
+    private LiveData<List<Artist>> allArtists;
+
+    /**
      * <code>LiveData</code> of a <code>List</code> of <code>Album</code> objects.
      */
     private LiveData<List<Album>> allAlbums;
+
+    /**
+     * <code>LiveData</code> of a <code>List</code> of <code>Song</code> objects.
+     */
+    private LiveData<List<Song>> allSongs;
 
     /**
      * Default constructor for this class. Assigns all class members.
@@ -42,7 +52,21 @@ public class MusicRepository {
         artistDAO = database.artistDao();
         albumDAO = database.albumDao();
         songDAO = database.songDao();
+        allArtists = artistDAO.getAll();
         allAlbums = albumDAO.getAll();
+        allSongs = songDAO.getAll();
+
+    }
+
+    /**
+     * Method for calling <code>insert</code> for the <code>ArtistDAO</code>.
+     * <p>Does this on another thread.</p>
+     * @param a The <code>Artist</code> to insert
+     */
+    public void insert(Artist a) {
+        MusicDatabase.databaseWriteExecutor.execute(() -> {
+            artistDAO.insert(a);
+        });
     }
 
     /**
@@ -53,6 +77,17 @@ public class MusicRepository {
     public void insert(Album a) {
         MusicDatabase.databaseWriteExecutor.execute(() -> {
             albumDAO.insert(a);
+        });
+    }
+
+    /**
+     * Method for calling <code>insert</code> for the <code>SongDAO</code>.
+     * <p>Does this on another thread.</p>
+     * @param s The <code>Song</code> to insert
+     */
+    public void insert(Song s) {
+        MusicDatabase.databaseWriteExecutor.execute(() -> {
+            songDAO.insert(s);
         });
     }
 
@@ -68,13 +103,41 @@ public class MusicRepository {
     }
 
     /**
+     * Method for calling <code>deleteAll</code> for the <code>ArtistDAO</code>.
+     * <p>Does this on another thread.</p>
+     */
+    public void deleteAllArtists() {
+        MusicDatabase.databaseWriteExecutor.execute(() -> {
+            artistDAO.deleteAll();
+        });
+    }
+
+    /**
      * Method for calling <code>deleteAll</code> for the <code>AlbumDAO</code>.
      * <p>Does this on another thread.</p>
      */
-    public void deleteAll() {
+    public void deleteAllAlbums() {
         MusicDatabase.databaseWriteExecutor.execute(() -> {
             albumDAO.deleteAll();
         });
+    }
+
+    /**
+     * Method for calling <code>deleteaAll</code> for the <code>SongDAO</code>.
+     * <p>Does this on another thread.</p>
+     */
+    public void deletAllSongs() {
+        MusicDatabase.databaseWriteExecutor.execute(() -> {
+            songDAO.deleteAll();
+        });
+    }
+
+    /**
+     * Method for returning the <code>List</code> of <code>Artist</code> objects.
+     * @return <code>List</code> of <code>Artist</code> objects
+     */
+    public LiveData<List<Artist>> getAllArtists() {
+        return allArtists;
     }
 
     /**
@@ -83,6 +146,14 @@ public class MusicRepository {
      */
     public LiveData<List<Album>> getAllAlbums() {
         return allAlbums;
+    }
+
+    /**
+     * Method for returning the <code>List</code> of <code>Song</code> objects.
+     * @return <code>List</code> of <code>Song</code> objects
+     */
+    public LiveData<List<Song>> getAllSongs() {
+        return allSongs;
     }
 
 }

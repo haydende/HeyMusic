@@ -36,11 +36,23 @@ public class MusicViewModel extends AndroidViewModel {
 
     /**
      * Method for calling the <code>insert</code> method for <code>mRepo</code>.
+     * @param a <code>Artist</code> object to insert
+     */
+    public void insert(Artist a) { mRepo.insert(a); }
+
+    /**
+     * Method for calling the <code>insert</code> method for <code>mRepo</code>.
      * @param a <code>Album</code> object to insert
      */
     public void insert(Album a) {
         mRepo.insert(a);
     }
+
+    /**
+     * Method for calling the <code>insert</code> method for <code>mRepo</code>.
+     * @param s <code>Song</code> object to insert
+     */
+    public void insert(Song s) { mRepo.insert(s); }
 
     /**
      * Method for calling the <code>update</code> method for <code>mRepo</code>.
