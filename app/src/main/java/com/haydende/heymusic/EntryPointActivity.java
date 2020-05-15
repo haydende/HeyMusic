@@ -38,12 +38,14 @@ public class EntryPointActivity extends AppCompatActivity
     private final static int MEDIASTORE_LOADER_ID = 0;
 
     /**
-     * Defines the query for what data should be collected using MediaStore.
-     * <p>Used for creating the <code>Cursor</code> mediaStoreCursor.</p>
+     * Defines which MediaStore Cursor columns should be returned from the query.
      */
-    private String [] projection = {MediaStore.Files.FileColumns._ID,
-                                    MediaStore.Files.FileColumns.DATE_ADDED,
-                                    MediaStore.Files.FileColumns.DURATION};
+    private String [] projection = {MediaStore.Audio.Albums._ID,
+                                    MediaStore.Audio.Albums.ALBUM,
+                                    MediaStore.Audio.Albums.ALBUM_ID,
+                                    MediaStore.Audio.Albums.ARTIST,
+                                    MediaStore.Audio.Albums.ARTIST_ID,
+                                    MediaStore.Audio.Albums.NUMBER_OF_SONGS};
 
     /**
      * This is used to obtain the data from <code>MediaStore</code>.
@@ -89,7 +91,7 @@ public class EntryPointActivity extends AppCompatActivity
     }
 
     private Artist getArtists(int position) {
-        try {
+        //try {
             int idIndex = mediaStoreCursor.getColumnIndex(MediaStore.Files.FileColumns._ID);
             int mediaTypeIndex = mediaStoreCursor.getColumnIndex(MediaStore.Files.FileColumns.MEDIA_TYPE);
             mediaStoreCursor.moveToPosition(position);
@@ -102,10 +104,10 @@ public class EntryPointActivity extends AppCompatActivity
                 default:
                     return null;
             }
-        } catch (CursorIndexOutOfBoundsException e) {
-            Log.d("Cursor Exception", e.toString());
-        }
-        return null;
+        //} catch (CursorIndexOutOfBoundsException e) {
+        //    Log.d("Cursor Exception", e.toString());
+        //}
+        //return null;
     }
 
     /**
@@ -136,8 +138,11 @@ public class EntryPointActivity extends AppCompatActivity
         }
     }
 
+    /**
+     * Method for getting an instance of Cursor.
+     */
     private Cursor getCursor(Context context) {
-        Uri uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
+        Uri uri = MediaStore.Files.getContentUri("content://external");
         String selection = MediaStore.Files.FileColumns.MEDIA_TYPE + "="
                          + MediaStore.Files.FileColumns.MEDIA_TYPE_AUDIO;
         return context.getContentResolver().query(uri,
@@ -149,6 +154,9 @@ public class EntryPointActivity extends AppCompatActivity
 
     @NonNull
     @Override
+    /**
+     * Creates a new Cursor Loader
+     */
     public Loader<Cursor> onCreateLoader(int id, @Nullable Bundle args) {
         // Set the projection statement
 
@@ -156,7 +164,7 @@ public class EntryPointActivity extends AppCompatActivity
         String selection = MediaStore.Files.FileColumns.MEDIA_TYPE + "="
                          + MediaStore.Files.FileColumns.MEDIA_TYPE_AUDIO;
         return new CursorLoader (this,
-                                Uri.parse("content://*"),
+                                Uri.parse("external"),
                                 projection,
                                 selection,
                                 null,
