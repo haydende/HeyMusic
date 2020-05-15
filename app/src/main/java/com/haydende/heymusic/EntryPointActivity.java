@@ -40,12 +40,8 @@ public class EntryPointActivity extends AppCompatActivity
     /**
      * Defines which MediaStore Cursor columns should be returned from the query.
      */
-    private String [] projection = {MediaStore.Audio.Albums._ID,
-                                    MediaStore.Audio.Albums.ALBUM,
-                                    MediaStore.Audio.Albums.ALBUM_ID,
-                                    MediaStore.Audio.Albums.ARTIST,
-                                    MediaStore.Audio.Albums.ARTIST_ID,
-                                    MediaStore.Audio.Albums.NUMBER_OF_SONGS};
+    private String [] projection = {MediaStore.Audio.Artists._ID,
+                                    MediaStore.Audio.Artists.ARTIST};
 
     /**
      * This is used to obtain the data from <code>MediaStore</code>.
@@ -59,6 +55,8 @@ public class EntryPointActivity extends AppCompatActivity
         checkReadExternalStoragePermission();
         mediaStoreCursor = getCursor(this);
         getArtists(0);
+        getAlbums(0);
+        getSongs(0);
     }
 
     /**
@@ -90,30 +88,31 @@ public class EntryPointActivity extends AppCompatActivity
         }
     }
 
-    private Artist getArtists(int position) {
-        //try {
-            int idIndex = mediaStoreCursor.getColumnIndex(MediaStore.Files.FileColumns._ID);
-            int mediaTypeIndex = mediaStoreCursor.getColumnIndex(MediaStore.Files.FileColumns.MEDIA_TYPE);
-            mediaStoreCursor.moveToPosition(position);
-            switch (mediaStoreCursor.getInt(mediaTypeIndex)) {
-                case MediaStore.Files.FileColumns.MEDIA_TYPE_AUDIO:
-                    String artistName = MediaStore.Audio.Artists.ARTIST;
-                    Log.d("Artist Name", "ArtistName: " + artistName);
-                    String albumName = MediaStore.Audio.Albums.ALBUM;
-                    Log.d("Album Name", "AlbumName: " + albumName);
-                default:
-                    return null;
-            }
-        //} catch (CursorIndexOutOfBoundsException e) {
-        //    Log.d("Cursor Exception", e.toString());
-        //}
-        //return null;
+    public Artist getArtists(int position) {
+        mediaStoreCursor.moveToPosition(position);
+        String artistName = mediaStoreCursor.getString(mediaStoreCursor.getColumnIndex("Artist"));
+        Log.d("Artist Name",  artistName);
+        return null;
+    }
+
+    public Album getAlbums(int position) {
+        mediaStoreCursor.moveToPosition(position);
+        String albumName = mediaStoreCursor.getString(mediaStoreCursor.getColumnIndex("Album"));
+        Log.d("Album Name", albumName);
+        return null;
+    }
+
+    public Song getSongs(int position) {
+        mediaStoreCursor.moveToPosition(position);
+        String songName = mediaStoreCursor.getString(mediaStoreCursor.getColumnIndex("Title"));
+        Log.d("Song Name", songName);
+        return null;
     }
 
     /**
      * Method is called once the permission request has been acknowledged.
      * @param requestCode Passed result code to identify which permission is being checked
-     * @param permissions <code>String</code> array of permissions that are request by application
+     * @param permissions {@link String} array of permissions that are request by application
      * @param grantResults Array of results for permissions - used to determine if accepted or denied
      */
     @Override
@@ -139,15 +138,13 @@ public class EntryPointActivity extends AppCompatActivity
     }
 
     /**
-     * Method for getting an instance of Cursor.
+     * Method for getting an instance of the Cursor.
+     * @return {@link Cursor} object for a {@link MediaStore} query searching for Audio files in external storage
      */
     private Cursor getCursor(Context context) {
-        Uri uri = MediaStore.Files.getContentUri("content://external");
-        String selection = MediaStore.Files.FileColumns.MEDIA_TYPE + "="
-                         + MediaStore.Files.FileColumns.MEDIA_TYPE_AUDIO;
-        return context.getContentResolver().query(uri,
-                                                  projection,
-                                                  selection,
+        return context.getContentResolver().query(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
+                                                  null,
+                                                  null,
                                                  null,
                                                  MediaStore.Files.FileColumns.TITLE + " ASC");
     }
