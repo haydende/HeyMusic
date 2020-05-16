@@ -9,6 +9,7 @@ import androidx.room.Room;
 import androidx.room.RoomDatabase;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -97,11 +98,19 @@ public abstract class MusicDatabase extends RoomDatabase {
                 AlbumDAO albumDAO = instance.albumDao();
                 SongDAO songDAO = instance.songDao();
 
+                List<Artist> artists = EntryPointActivity.getArtists();
+                List<Album> albums = EntryPointActivity.getAlbums();
+
                 // Wipe the DB so nothing deleted when the app was closed remains
                 albumDAO.deleteAll();
 
                 // Insert new instance of Album to the database. Should show in the GridActivity.
-                albumDAO.insert(new Album(1, "Title", 2020));
+                // albumDAO.insert(new Album(1, "Title", 2020));
+                for (Artist a: artists) {
+                    artistDAO.insert(a);
+                }
+
+
 
                 // TODO: Call method for collecting data from MediaStore
 

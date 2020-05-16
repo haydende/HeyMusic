@@ -10,6 +10,7 @@ import androidx.loader.content.Loader;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.CursorIndexOutOfBoundsException;
@@ -19,6 +20,9 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.widget.Toast;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Activity will be the first to start once application has started.
@@ -38,15 +42,9 @@ public class EntryPointActivity extends AppCompatActivity
     private final static int MEDIASTORE_LOADER_ID = 0;
 
     /**
-     * Defines which MediaStore Cursor columns should be returned from the query.
-     */
-    private String [] projection = {MediaStore.Audio.Artists._ID,
-                                    MediaStore.Audio.Artists.ARTIST};
-
-    /**
      * This is used to obtain the data from <code>MediaStore</code>.
      */
-    private Cursor mediaStoreCursor;
+    private static Cursor mediaStoreCursor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,9 +52,11 @@ public class EntryPointActivity extends AppCompatActivity
         setContentView(R.layout.activity_entry_point);
         checkReadExternalStoragePermission();
         mediaStoreCursor = getCursor(this);
-        getArtists(0);
-        getAlbums(0);
-        getSongs(0);
+        // getArtists(0);
+        // getAlbums(0);
+        // getSongs(0);
+        Intent gridView = new Intent(this, GridActivity.class);
+        this.startActivity(gridView);
     }
 
     /**
@@ -88,15 +88,25 @@ public class EntryPointActivity extends AppCompatActivity
         }
     }
 
-    public Artist getArtists(int position) {
-        mediaStoreCursor.moveToPosition(position);
-        String artistName = mediaStoreCursor.getString(mediaStoreCursor.getColumnIndex("Artist"));
-        Log.d("Artist Name",  artistName);
-        return null;
+    public static List<Artist> getArtists() {
+        List<Artist> artists = new ArrayList<>();
+        String[] projection = {MediaStore.Audio.Artists.ARTIST};
+        String selection = MediaStore.Audio.Artists.ARTIST;
+        for (int i = 0; i < mediaStoreCursor.getCount(); i++) {
+            mediaStoreCursor.moveToPosition(i);
+            String name = mediaStoreCursor.getString(mediaStoreCursor.getColumnIndex("Artist"));
+            Log.d("Artist Name", name);
+            artists.add(new Artist(name));
+        }
+        return artists;
     }
 
-    public Album getAlbums(int position) {
-        mediaStoreCursor.moveToPosition(position);
+    public List<Album> getAlbums() {
+        List<Album> albums = new ArrayList<>();
+        String[] projection = {MediaStore.Audio.Albums.ALBUM,
+                               MediaStore.Audio.Albums.};
+        String[] selection = {MediaStore.Audio.Albums}
+        mediaStoreCursor = getCursor(this, projection, selection);
         String albumName = mediaStoreCursor.getString(mediaStoreCursor.getColumnIndex("Album"));
         Log.d("Album Name", albumName);
         return null;
@@ -141,10 +151,10 @@ public class EntryPointActivity extends AppCompatActivity
      * Method for getting an instance of the Cursor.
      * @return {@link Cursor} object for a {@link MediaStore} query searching for Audio files in external storage
      */
-    private Cursor getCursor(Context context) {
+    private Cursor getCursor(Context context, String projection, String selection) {
         return context.getContentResolver().query(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
-                                                  null,
-                                                  null,
+                                                  projection,
+                                                  selection,
                                                  null,
                                                  MediaStore.Files.FileColumns.TITLE + " ASC");
     }

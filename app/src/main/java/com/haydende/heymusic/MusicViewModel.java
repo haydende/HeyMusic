@@ -24,6 +24,8 @@ public class MusicViewModel extends AndroidViewModel {
      */
     private LiveData<List<Album>> allAlbums;
 
+    private LiveData<List<Artist>> allArtists;
+
     /**
      * Default constructor for this class.
      * @param application Used to get context for the Database.
@@ -32,6 +34,7 @@ public class MusicViewModel extends AndroidViewModel {
         super(application);
         mRepo = new MusicRepository(application);
         allAlbums = mRepo.getAllAlbums();
+        allArtists = mRepo.getAllArtists();
     }
 
     /**
@@ -69,4 +72,6 @@ public class MusicViewModel extends AndroidViewModel {
     public LiveData<List<Album>> getAllAlbums() {
         return allAlbums;
     }
+
+    public LiveData<List<Artist>> getAllArtists() { return allArtists; }
 }
