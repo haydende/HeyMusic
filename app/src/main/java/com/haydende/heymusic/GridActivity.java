@@ -8,6 +8,7 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.loader.app.LoaderManager;
+import androidx.loader.content.CursorLoader;
 import androidx.loader.content.Loader;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -21,6 +22,7 @@ import android.database.Cursor;
 import android.media.Image;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.text.Layout;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -54,16 +56,27 @@ public class GridActivity extends AppCompatActivity
      */
     private static Cursor mediaStoreCursor;
 
-    private static String[] artistProjection = {
+    private RecyclerView recyclerView;
+    private AlbumGridAdapter albumGridAdapter;
 
+    private ItemType itemType = ItemType.ALBUM;
+
+    private static String[] artistProjection = {
+            MediaStore.Audio.Artists._ID,
+            MediaStore.Audio.Artists.ARTIST
     };
 
     private static String[] albumProjection = {
-
+            MediaStore.Audio.Albums._ID,
+            MediaStore.Audio.Albums.ALBUM,
+            MediaStore.Audio.Albums.ALBUM_ART
     };
 
     private static String[] songProjection = {
-
+            MediaStore.Audio.Media._ID,
+            MediaStore.Audio.Media.ALBUM_KEY,
+            MediaStore.Audio.Media.ARTIST_KEY,
+            MediaStore.Audio.Media.DATE_ADDED
     };
 
     @Override
@@ -71,21 +84,13 @@ public class GridActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        final ArtistListAdapter adapter = new ArtistListAdapter(this);
+        recyclerView = findViewById(R.id.recycler_view);
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 4);
+        recyclerView.setLayoutManager(gridLayoutManager);
+        albumGridAdapter = new AlbumGridAdapter(this);
+        recyclerView.setAdapter(albumGridAdapter);
 
-        MusicViewModel mVM = ViewModelProviders.of(this).get(MusicViewModel.class);
-        mVM.getAllArtists().observe(this, new Observer<List<Artist>>() {
-
-            public void onChanged(@Nullable final List<Artist> artists) {
-                // update cached copy of data
-                adapter.setArtists(artists);
-            }
-        });
-
-        RecyclerView recyclerView = findViewById(R.id.recycler_view);
-        recyclerView.setAdapter(adapter);
-        recyclerView.setLayoutManager(new GridLayoutManager(this, 4));
-
+        checkReadExternalStoragePermission();
     }
 
     /**
@@ -120,16 +125,36 @@ public class GridActivity extends AppCompatActivity
     @NonNull
     @Override
     public Loader<Cursor> onCreateLoader(int id, @Nullable Bundle args) {
-
+        String[] projection = albumProjection;
+        String selection = null;
+        switch (itemType) {
+            case ARTIST:
+                projection = artistProjection;
+                break;
+            case ALBUM:
+                projection = albumProjection;
+                break;
+            case SONG:
+                projection = songProjection;
+                break;
+        }
+        return new CursorLoader(
+                this,
+                MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,
+                projection,
+                selection,
+                null,
+                null
+        );
     }
 
     @Override
     public void onLoadFinished(@NonNull Loader<Cursor> loader, Cursor data) {
-
+        albumGridAdapter.changeCursor(data);
     }
 
     @Override
     public void onLoaderReset(@NonNull Loader<Cursor> loader) {
-
+        albumGridAdapter.changeCursor(null);
     }
 }

@@ -48,11 +48,11 @@ public class AlbumGridAdapter extends RecyclerView.Adapter<AlbumGridAdapter.Albu
 
     @Override
     public void onBindViewHolder(@NonNull AlbumViewHolder holder, int position) {
-        Bitmap bitmap = getAlbumCover(position);
-        if (bitmap != null) {
-            holder.getImageButton().setImageBitmap(bitmap);
+        // Bitmap bitmap = getAlbumCover(position);
+        //if (bitmap != null) {
+            // holder.getImageButton().setImageBitmap(bitmap);
             holder.getTextView().setText("Hello world");
-        }
+        //}
     }
 
     @Override
