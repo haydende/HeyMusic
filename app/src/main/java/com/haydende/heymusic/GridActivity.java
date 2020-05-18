@@ -20,6 +20,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.media.Image;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -57,26 +58,40 @@ public class GridActivity extends AppCompatActivity
     private static Cursor mediaStoreCursor;
 
     private RecyclerView recyclerView;
-    private AlbumGridAdapter albumGridAdapter;
+    private RecyclerView.Adapter gridAdapter;
 
-    private ItemType itemType = ItemType.ALBUM;
+    /**
+     * {@link Enum} value to represent whether this Grid Layout will be showing ARTIST, ALBUM or
+     * SONG data.
+     *
+     * @see ItemType
+     */
+    private ItemType itemType = ItemType.ARTIST;
 
+    /**
+     * {@link String} array of MediaStore column headers for collecting Artist data.
+     */
     private static String[] artistProjection = {
             MediaStore.Audio.Artists._ID,
             MediaStore.Audio.Artists.ARTIST
     };
 
+    /**
+     * {@link String} array of MediaStore column headers for collecting Album data.
+     */
     private static String[] albumProjection = {
             MediaStore.Audio.Albums._ID,
-            MediaStore.Audio.Albums.ALBUM,
-            MediaStore.Audio.Albums.ALBUM_ART
+            MediaStore.Audio.Albums.ALBUM
     };
 
-    private static String[] songProjection = {
+    /**
+     * {@link String} array of MediaStore column headers for collecting Song data.
+     */
+    private final static String[] songProjection = {
             MediaStore.Audio.Media._ID,
-            MediaStore.Audio.Media.ALBUM_KEY,
-            MediaStore.Audio.Media.ARTIST_KEY,
-            MediaStore.Audio.Media.DATE_ADDED
+            MediaStore.Audio.Media.TITLE,
+            MediaStore.Audio.Media.ALBUM_ID,
+            MediaStore.Audio.Media.ARTIST_ID
     };
 
     @Override
@@ -87,8 +102,19 @@ public class GridActivity extends AppCompatActivity
         recyclerView = findViewById(R.id.recycler_view);
         GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 4);
         recyclerView.setLayoutManager(gridLayoutManager);
-        albumGridAdapter = new AlbumGridAdapter(this);
-        recyclerView.setAdapter(albumGridAdapter);
+        switch (itemType) {
+            case ARTIST:
+                gridAdapter = new ArtistGridAdapter(this);
+                break;
+            case ALBUM:
+                gridAdapter = new AlbumGridAdapter(this);
+                break;
+            case SONG:
+            default:
+                gridAdapter = new SongGridAdapter(this);
+                break;
+        }
+        recyclerView.setAdapter(gridAdapter);
 
         checkReadExternalStoragePermission();
     }
@@ -127,20 +153,24 @@ public class GridActivity extends AppCompatActivity
     public Loader<Cursor> onCreateLoader(int id, @Nullable Bundle args) {
         String[] projection = albumProjection;
         String selection = null;
+        Uri contentUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
         switch (itemType) {
             case ARTIST:
                 projection = artistProjection;
+                contentUri = MediaStore.Audio.Artists.EXTERNAL_CONTENT_URI;
                 break;
             case ALBUM:
                 projection = albumProjection;
+                contentUri = MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI;
                 break;
             case SONG:
+            default:
                 projection = songProjection;
                 break;
         }
         return new CursorLoader(
                 this,
-                MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,
+                contentUri,
                 projection,
                 selection,
                 null,
@@ -150,11 +180,31 @@ public class GridActivity extends AppCompatActivity
 
     @Override
     public void onLoadFinished(@NonNull Loader<Cursor> loader, Cursor data) {
-        albumGridAdapter.changeCursor(data);
+        switch (itemType) {
+            case ARTIST:
+                ((ArtistGridAdapter) gridAdapter).changeCursor(data);
+                break;
+            case ALBUM:
+                ((AlbumGridAdapter) gridAdapter).changeCursor(data);
+                break;
+            case SONG:
+            default:
+                ((SongGridAdapter) gridAdapter).changeCursor(data);
+        }
     }
 
     @Override
     public void onLoaderReset(@NonNull Loader<Cursor> loader) {
-        albumGridAdapter.changeCursor(null);
+        switch (itemType) {
+            case ARTIST:
+                ((ArtistGridAdapter) gridAdapter).changeCursor(null);
+                break;
+            case ALBUM:
+                ((AlbumGridAdapter) gridAdapter).changeCursor(null);
+                break;
+            case SONG:
+            default:
+                ((SongGridAdapter) gridAdapter).changeCursor(null);
+        }
     }
 }
