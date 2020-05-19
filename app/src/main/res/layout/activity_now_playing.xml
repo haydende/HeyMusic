@@ -6,5 +6,55 @@
     android:layout_height="match_parent"
     tools:context=".NowPlayingActivity">
 
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/nowPlayingRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/nowPlayingButtons"
+        tools:listitem="@layout/now_playing_item"/>
+
+    <LinearLayout
+        android:id="@+id/nowPlayingButtons"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:minHeight="60dp"
+        app:layout_constraintBottom_toBottomOf="@+id/nowPlayingRecyclerView"
+        app:layout_constraintEnd_toEndOf="@id/nowPlayingRecyclerView"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+        <ImageButton
+            android:id="@+id/nowPlayingButtons.shuffle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:minHeight="60dp"
+            android:minWidth="60dp"/>
+        <ImageButton
+            android:id="@+id/nowPlayingButtons.rewind"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:minHeight="60dp"
+            android:minWidth="60dp"/>
+        <ImageButton
+            android:id="@+id/nowPlayingButtons.playPause"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:minHeight="60dp"
+            android:minWidth="60dp"/>
+        <ImageButton
+            android:id="@+id/nowPlayingButtons.forward"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:minHeight="60dp"
+            android:minWidth="60dp"/>
+        <ImageButton
+            android:id="@+id/nowPlayingButtons.repeat"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:minHeight="60dp"
+            android:minWidth="60dp"/>
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

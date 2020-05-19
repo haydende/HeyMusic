@@ -3,25 +3,128 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nowPlayingItem"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <LinearLayout
-        android:id="@+id/nowPlayingLayout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-        <RelativeLayout
+        <ImageButton
+            android:id="@+id/nowPlayingItem.coverImage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:>
-            <ImageButton
-                android:id="@+id/nowPlayingLayout.albumCover"
-                android:layout_width="250dp"
-                android:layout_height="250dp"
-                android:
-                android:maxWidth="250dp"
-                android:maxHeight="250dp" />
-        </RelativeLayout>
+            android:minWidth="300dp"
+            android:minHeight="300dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.496"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.080" />
 
-    </LinearLayout>
+        <SeekBar
+            android:id="@+id/nowPlayingItem.seekBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:minWidth="300dp"
+            android:minHeight="20dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/nowPlayingItem.coverImage"
+            app:layout_constraintVertical_bias="0.050" />
+
+    <TextView
+        android:id="@+id/nowPlayingItem.trackName"
+        android:text="Track Name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:minWidth="70dp"
+        android:minHeight="20dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@id/nowPlayingItem.artistName"
+        app:layout_constraintHorizontal_bias="0.382"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/nowPlayingItem.seekBar"
+        app:layout_constraintVertical_bias="0.047" />
+
+    <TextView
+        android:id="@+id/nowPlayingItem.albumName"
+        android:text="Album Name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:minWidth="70dp"
+        android:minHeight="20dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.601"
+        app:layout_constraintStart_toEndOf="@+id/nowPlayingItem.trackName"
+        app:layout_constraintTop_toBottomOf="@+id/nowPlayingItem.seekBar"
+        app:layout_constraintVertical_bias="0.047" />
+
+    <TextView
+        android:id="@+id/nowPlayingItem.artistName"
+        android:text="Artist Name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:minWidth="70dp"
+        android:minHeight="20dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/nowPlayingItem.albumName" />
+
+    <TextView
+        android:id="@+id/nowPlayingItem.format"
+        android:text="Format"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:minWidth="70dp"
+        android:minHeight="20dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.076"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/nowPlayingItem.artistName"
+        app:layout_constraintVertical_bias="0.043" />
+
+    <TextView
+        android:id="@+id/nowPlayingItem.bitRate"
+        android:text="Bit Rate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:minWidth="70dp"
+        android:minHeight="20dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.11"
+        app:layout_constraintStart_toEndOf="@+id/nowPlayingItem.format"
+        app:layout_constraintTop_toBottomOf="@+id/nowPlayingItem.artistName" />
+
+    <TextView
+        android:id="@+id/nowPlayingItem.bitDepth"
+        android:text="Bit Depth"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:minWidth="70dp"
+        android:minHeight="20dp"
+        app:layout_constraintEnd_toStartOf="@+id/nowPlayingItem.sampleRate"
+        app:layout_constraintHorizontal_bias="0.47"
+        app:layout_constraintStart_toEndOf="@+id/nowPlayingItem.bitRate"
+        app:layout_constraintTop_toBottomOf="@+id/nowPlayingItem.artistName" />
+
+    <TextView
+        android:id="@+id/nowPlayingItem.sampleRate"
+        android:text="Sample Rate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:layout_marginEnd="36dp"
+        android:layout_marginRight="36dp"
+        android:minWidth="70dp"
+        android:minHeight="20dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/nowPlayingItem.artistName"
+        app:layout_constraintVertical_bias="0.0" />
 </androidx.constraintlayout.widget.ConstraintLayout>
