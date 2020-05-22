@@ -2,9 +2,11 @@ package com.haydende.heymusic;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -17,6 +19,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -45,8 +48,51 @@ public class SongGridAdapter extends RecyclerView.Adapter<SongGridAdapter.SongVi
         Bitmap bitmap = getAlbumCover(position);
         if (bitmap != null) {
             holder.getImageButton().setImageBitmap(bitmap);
-            holder.getTextView().setText(getSongName(position));
         }
+        holder.getImageButton().setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            ArrayList<String> extraData = new ArrayList<>();
+            Intent nowPlaying = new Intent(activity, NowPlayingActivity.class);
+
+            // add track name to new activity
+            nowPlaying.putExtra(
+                    "TRACK_NAME",
+                    mediaStoreCursor.getString(
+                            mediaStoreCursor.getColumnIndex(MediaStore.Audio.Media.TITLE)
+                    )
+            );
+
+            // add album name
+            nowPlaying.putExtra(
+                    "ALBUM_NAME",
+                    mediaStoreCursor.getString(
+                            mediaStoreCursor.getColumnIndex(MediaStore.Audio.Media.ALBUM)
+                    )
+            );
+
+            // add artist name
+            nowPlaying.putExtra(
+                    "ARTIST_NAME",
+                    mediaStoreCursor.getString(
+                            mediaStoreCursor.getColumnIndex(MediaStore.Audio.Media.ARTIST)
+                    )
+            );
+
+            // add Album ID (used to get cover art)
+            nowPlaying.putExtra(
+                    "ALBUM_ID",
+                    mediaStoreCursor.getString(
+                            mediaStoreCursor.getColumnIndex(MediaStore.Audio.Media.ALBUM_ID)
+                    )
+            );
+
+            // start the activity
+            activity.startActivity(nowPlaying);
+            }
+        });
+        holder.getTextView().setText(getSongName(position));
     }
 
     @Override
