@@ -20,6 +20,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -52,44 +53,17 @@ public class SongGridAdapter extends RecyclerView.Adapter<SongGridAdapter.SongVi
         holder.getImageButton().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Intent nowPlaying = new Intent(activity, NowPlayingActivity.class);
 
-            ArrayList<String> extraData = new ArrayList<>();
-            Intent nowPlaying = new Intent(activity, NowPlayingActivity.class);
+                HashMap<String, String> newTrackAttributes = new HashMap<>();
+                newTrackAttributes.put("Title", getSongName(position));
+                newTrackAttributes.put("Album", getAlbumName(position));
+                newTrackAttributes.put("Artist", getArtistName(position));
 
-            // add track name to new activity
-            nowPlaying.putExtra(
-                    "TRACK_NAME",
-                    mediaStoreCursor.getString(
-                            mediaStoreCursor.getColumnIndex(MediaStore.Audio.Media.TITLE)
-                    )
-            );
+                NowPlayingActivity.setTrackAttributes(newTrackAttributes);
 
-            // add album name
-            nowPlaying.putExtra(
-                    "ALBUM_NAME",
-                    mediaStoreCursor.getString(
-                            mediaStoreCursor.getColumnIndex(MediaStore.Audio.Media.ALBUM)
-                    )
-            );
-
-            // add artist name
-            nowPlaying.putExtra(
-                    "ARTIST_NAME",
-                    mediaStoreCursor.getString(
-                            mediaStoreCursor.getColumnIndex(MediaStore.Audio.Media.ARTIST)
-                    )
-            );
-
-            // add Album ID (used to get cover art)
-            nowPlaying.putExtra(
-                    "ALBUM_ID",
-                    mediaStoreCursor.getString(
-                            mediaStoreCursor.getColumnIndex(MediaStore.Audio.Media.ALBUM_ID)
-                    )
-            );
-
-            // start the activity
-            activity.startActivity(nowPlaying);
+                // start the activity
+                activity.startActivity(nowPlaying);
             }
         });
         holder.getTextView().setText(getSongName(position));
@@ -138,11 +112,53 @@ public class SongGridAdapter extends RecyclerView.Adapter<SongGridAdapter.SongVi
         public TextView getTextView() { return this.textView; }
     }
 
+    /**
+     * Private method for getting the Song Title from the {@link this#mediaStoreCursor}
+     * @param position Integer position for the mediaStoreCursor to point to
+     * @return String song title
+     *
+     * @see Cursor
+     * @see MediaStore
+     */
     private String getSongName(int position) {
         mediaStoreCursor.moveToPosition(position);
         return mediaStoreCursor.getString(
                 mediaStoreCursor.getColumnIndex(
                         MediaStore.Audio.Media.TITLE
+                )
+        );
+    }
+
+    /**
+     * Private method for getting the Album Title from the {@link this#mediaStoreCursor}
+     * @param position Integer position for the mediaStoreCursor to point to
+     * @return String album title
+     *
+     * @see Cursor
+     * @see MediaStore
+     */
+    private String getAlbumName(int position) {
+        mediaStoreCursor.moveToPosition(position);
+        return mediaStoreCursor.getString(
+                mediaStoreCursor.getColumnIndex(
+                        MediaStore.Audio.Media.ALBUM
+                )
+        );
+    }
+
+    /**
+     * Private method for getting the Artist Name from the {@link this#mediaStoreCursor}
+     * @param position Integer position for the mediaStoreCursor to point to
+     * @return String artist name
+     *
+     * @see Cursor
+     * @see MediaStore
+     */
+    private String getArtistName(int position) {
+        mediaStoreCursor.moveToPosition(position);
+        return mediaStoreCursor.getString(
+                mediaStoreCursor.getColumnIndex(
+                        MediaStore.Audio.Media.ARTIST
                 )
         );
     }
