@@ -26,9 +26,6 @@ public class NowPlayingActivity extends AppCompatActivity {
 
     private RecyclerView recyclerView;
 
-    private RecyclerView.Adapter nowPlayingAdapter;
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
