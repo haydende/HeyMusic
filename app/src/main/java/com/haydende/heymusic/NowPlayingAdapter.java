@@ -16,14 +16,22 @@ import java.util.HashMap;
 
 public class NowPlayingAdapter extends RecyclerView.Adapter<NowPlayingAdapter.NowPlayingViewHolder> {
 
+    /**
+     * HashMap containing the String attributes to be displayed in the now_playing_item.xml layout.
+     */
     private final HashMap<String, String> attributes;
 
+    /**
+     * Bitmap image for the ImageButton in the now_playing_item.xml layout.
+     */
     private final Bitmap coverArt;
 
-    private final Activity activity;
-
-    public NowPlayingAdapter(Activity activity, HashMap attributes, Bitmap coverArt) {
-        this.activity = activity;
+    /**
+     * Default constructor for this class.
+     * @param attributes HashMap value for the attributes member
+     * @param coverArt Bitmap value for the coverArt member
+     */
+    public NowPlayingAdapter(HashMap attributes, Bitmap coverArt) {
         this.attributes = attributes;
         this.coverArt = coverArt;
     }
@@ -55,16 +63,66 @@ public class NowPlayingAdapter extends RecyclerView.Adapter<NowPlayingAdapter.No
 
     public static class NowPlayingViewHolder extends RecyclerView.ViewHolder {
 
+        /**
+         * Instance member to represent {@code nowPlayingItem.coverImage} in
+         * {@code now_playing_item.xml}.
+         */
         public final ImageButton albumCover;
+
+        /**
+         * Instance member to represent {@code nowPlayingItem.seekBar} in
+         * {@code now_playing_item.xml}.
+         */
         public final SeekBar seekBar;
+
+        /**
+         * Instance member to represent {@code nowPlayingItem.trackName} in
+         * {@code now_playing_item.xml}.
+         */
         public final TextView trackName;
+
+        /**
+         * Instance member to represent {@code nowPlayingItem.albumName} in
+         * {@code now_playing_item.xml}.
+         */
         public final TextView albumName;
+
+        /**
+         * Instance member to represent {@code nowPlayingItem.artistName} in
+         * {@code now_playing_item.xml}.
+         */
         public final TextView artistName;
+
+        /**
+         * Instance member to represent {@code nowPlayingItem.fileFormat} in
+         * {@code now_playing_item.xml}.
+         */
         public final TextView fileFormat;
+
+        /**
+         * Instance member to represent {@code nowPlayingItem.bitRate} in
+         * {@code now_playing_item.xml}.
+         */
         public final TextView bitRate;
+
+        /**
+         * Instance member to represent {@code nowPlayingItem.bitDepth} in
+         * {@code now_playing_item.xml}.
+         */
         public final TextView bitDepth;
+
+        /**
+         * Instance member to represent {@code nowPlayingItem.sampleRate} in
+         * {@code now_playing_item.xml}.
+         */
         public final TextView sampleRate;
 
+        /**
+         * Default constructor for this class.
+         * @param itemView View created from an xml layout in
+         *                 {@link NowPlayingAdapter#onBindViewHolder(NowPlayingViewHolder, int)}.
+         *                 In this case the layout is now_playing_item.xml
+         */
         public NowPlayingViewHolder(@NonNull View itemView) {
             super(itemView);
             albumCover = itemView.findViewById(R.id.nowPlayingItem_coverImage);

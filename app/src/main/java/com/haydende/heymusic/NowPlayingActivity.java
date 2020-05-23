@@ -35,7 +35,7 @@ public class NowPlayingActivity extends AppCompatActivity {
         setContentView(R.layout.activity_now_playing);
         recyclerView = findViewById(R.id.nowPlayingRecyclerView);
         recyclerView.setLayoutManager(new GridLayoutManager(this, 1));
-        recyclerView.setAdapter(new NowPlayingAdapter(this, trackAttributes, coverArt));
+        recyclerView.setAdapter(new NowPlayingAdapter(trackAttributes, coverArt));
     }
 
     /**
