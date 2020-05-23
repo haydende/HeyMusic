@@ -1,9 +1,14 @@
 package com.haydende.heymusic;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Log;
 
@@ -17,11 +22,20 @@ public class NowPlayingActivity extends AppCompatActivity {
      */
     private static HashMap<String, String> trackAttributes;
 
+    private static Bitmap coverArt;
+
+    private RecyclerView recyclerView;
+
+    private RecyclerView.Adapter nowPlayingAdapter;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_now_playing);
-        loadTrack();
+        recyclerView = findViewById(R.id.nowPlayingRecyclerView);
+        recyclerView.setLayoutManager(new GridLayoutManager(this, 1));
+        recyclerView.setAdapter(new NowPlayingAdapter(this, trackAttributes, coverArt));
     }
 
     /**
@@ -52,5 +66,9 @@ public class NowPlayingActivity extends AppCompatActivity {
      */
     public static void setTrackAttributes(HashMap<String, String> newTrackAttributes) {
         trackAttributes = newTrackAttributes;
+    }
+
+    public static void setAlbumCover(Bitmap newCoverArt) {
+        coverArt = newCoverArt;
     }
 }

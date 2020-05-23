@@ -61,6 +61,7 @@ public class SongGridAdapter extends RecyclerView.Adapter<SongGridAdapter.SongVi
                 newTrackAttributes.put("Artist", getArtistName(position));
 
                 NowPlayingActivity.setTrackAttributes(newTrackAttributes);
+                NowPlayingActivity.setAlbumCover(getAlbumCover(position));
 
                 // start the activity
                 activity.startActivity(nowPlaying);
