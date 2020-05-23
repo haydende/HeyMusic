@@ -130,7 +130,7 @@ public class AlbumGridAdapter extends RecyclerView.Adapter<AlbumGridAdapter.Albu
     /**
      * Method for getting the name for the album at the specified position in the {@link #mediaStoreCursor}.
      * @param position position for the {@link #mediaStoreCursor} to look in
-     * @return Album name to be used for {@link this#textView}
+     * @return Album name to be used for {@link AlbumViewHolder#textView}
      */
     private String getAlbumName(int position) {
         mediaStoreCursor.moveToPosition(position);
