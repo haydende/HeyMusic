@@ -62,6 +62,7 @@ public class SongGridAdapter extends RecyclerView.Adapter<SongGridAdapter.SongVi
 
                 NowPlayingActivity.setTrackAttributes(newTrackAttributes);
                 NowPlayingActivity.setAlbumCover(getAlbumCover(position));
+                NowPlayingActivity.setContentUri(getUri(position));
 
                 // start the activity
                 activity.startActivity(nowPlaying);
@@ -198,6 +199,30 @@ public class SongGridAdapter extends RecyclerView.Adapter<SongGridAdapter.SongVi
         Uri artworkUri = Uri.parse("content://media/external/audio/albumart");
         Uri imageUri = Uri.withAppendedPath(artworkUri, String.valueOf(albumID));
         return imageUri;
+    }
+
+    /**
+     * Method for getting the {@link Uri} for the track at position.
+     * @param position position for mediaStoreCursor to move to
+     * @return Uri object referencing the URI for the track at position in the mediaStoreCursor
+     */
+    private Uri getUri(int position) {
+        mediaStoreCursor.moveToPosition(position);
+        // get Uri for VOLUME_NAME (this will get the one for this specific file,
+        // making it adaptable)
+        Uri fileUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
+        // replace Uri value with old value + /_ID (to make it point to the specific track)
+        fileUri = Uri.parse(
+                fileUri.toString()
+                + "/"
+                + mediaStoreCursor.getString(
+                    mediaStoreCursor.getColumnIndex(
+                        MediaStore.Audio.Media._ID
+                    )
+                )
+        );
+        Log.d("fileUri ", fileUri.toString());
+        return fileUri;
     }
 
     private Cursor swapCursor(Cursor cursor) {
