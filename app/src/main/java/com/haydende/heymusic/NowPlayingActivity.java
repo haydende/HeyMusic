@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
@@ -32,11 +33,15 @@ public class NowPlayingActivity extends AppCompatActivity {
 
     private static Bitmap coverArt;
 
-    private MediaPlayer player;
+    private static MediaPlayer player;
 
     private RecyclerView recyclerView;
 
+    private ImageButton shuffle;
+    private ImageButton rewind;
     private ImageButton playPauseButton;
+    private ImageButton forward;
+    private ImageButton repeat;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,39 +55,56 @@ public class NowPlayingActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(new GridLayoutManager(this, 1));
         recyclerView.setAdapter(new NowPlayingAdapter(trackAttributes, coverArt));
 
+        shuffle = findViewById(R.id.nowPlayingButtons_shuffle);
+        rewind = findViewById(R.id.nowPlayingButtons_rewind);
         playPauseButton = findViewById(R.id.nowPlayingButtons_playPause);
-        playPauseButton.setOnClickListener((View v) -> {
-            new Thread(() -> {
-                try {
-                    player.setDataSource(getApplicationContext(), contentUri);
-                    player.prepare();
-                    player.start();
-                } catch (IOException ioE) {
+        forward = findViewById(R.id.nowPlayingButtons_forward);
+        repeat = findViewById(R.id.nowPlayingButtons_repeat);
 
-                }
-            }).start();
+        new Thread(() -> {
+            try {
+                player.setDataSource(getApplicationContext(), contentUri);
+                player.prepare();
+            } catch (IOException ioE) {
+                Log.d("NowPlayingActivity - IOException Error", ioE.getLocalizedMessage());
+            }
+        }).start();
+
+        shuffle.setOnClickListener((View v) -> {
+            // TODO
         });
-    }
 
-    /**
-     * Method for getting the attributes for the current track.
-     * <p>
-     *     This method is executed upon the creation of this Activity
-     * </p>
-     * 
-     * @see this#onCreate(Bundle)
-     */
-    private void loadTrack() {
-        String trackName = trackAttributes.get("Title");
-        String albumName = trackAttributes.get("Album");
-        String artistName = trackAttributes.get("Artist");
-        // String albumID;
+        rewind.setOnClickListener((View v) -> {
+            player.seekTo(0);
+        });
 
-        // print the values to see what they are
-        Log.d("Track Name", trackName);
-        Log.d("Album Name", albumName);
-        Log.d("Artist Name", artistName);
-        // Log.d("AlbumID", albumID);
+        playPauseButton.setOnClickListener((View v) -> {
+            if (player.isPlaying()) {
+                player.pause();
+                playPauseButton.setForeground(
+                        getResources().getDrawable(
+                                R.drawable.ic_play_arrow_black_24dp,
+                                null
+                        )
+                );
+            } else {
+                player.start();
+                playPauseButton.setForeground(
+                        getResources().getDrawable(
+                                R.drawable.ic_pause_black_24dp,
+                                null
+                        )
+                );
+            }
+        });
+
+        forward.setOnClickListener((View v) -> {
+            player.seekTo(player.getDuration());
+        });
+
+        repeat.setOnClickListener((View v) -> {
+            player.setLooping(player.isLooping() ? false : true);
+        });
     }
 
     /**
