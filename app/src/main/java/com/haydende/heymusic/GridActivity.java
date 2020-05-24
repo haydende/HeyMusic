@@ -89,6 +89,7 @@ public class GridActivity extends AppCompatActivity
      */
     private final static String[] songProjection = {
             MediaStore.Audio.Media._ID,
+            MediaStore.Audio.Media.DISPLAY_NAME,
             MediaStore.Audio.Media.TITLE,
             MediaStore.Audio.Media.ALBUM,
             MediaStore.Audio.Media.ALBUM_ID,
