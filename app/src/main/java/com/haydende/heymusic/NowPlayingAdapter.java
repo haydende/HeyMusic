@@ -2,6 +2,7 @@ package com.haydende.heymusic;
 
 import android.app.Activity;
 import android.graphics.Bitmap;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +13,16 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import org.jaudiotagger.audio.AudioFile;
+import org.jaudiotagger.audio.AudioFileIO;
+import org.jaudiotagger.audio.AudioHeader;
+import org.jaudiotagger.audio.exceptions.CannotReadException;
+import org.jaudiotagger.audio.exceptions.InvalidAudioFrameException;
+import org.jaudiotagger.audio.exceptions.ReadOnlyFileException;
+import org.jaudiotagger.tag.TagException;
+
+import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 
 public class NowPlayingAdapter extends RecyclerView.Adapter<NowPlayingAdapter.NowPlayingViewHolder> {
@@ -50,10 +61,42 @@ public class NowPlayingAdapter extends RecyclerView.Adapter<NowPlayingAdapter.No
         holder.trackName.setText(attributes.get("Title"));
         holder.albumName.setText(attributes.get("Album"));
         holder.artistName.setText(attributes.get("Artist"));
-        // holder.fileFormat.setText("format");
-        // holder.bitRate.setText("bitrate");
-        // holder.bitDepth.setText("bitDepth");
-        // holder.sampleRate.setText("sampleRate");
+
+        // get the metadata using the AudioFileIO API
+        String format = "format";
+        int bitDepth = 16;
+        String bitRate = "BitRate";
+        String sampleRate = "Sample Rate";
+
+        try {
+            File track = new File(attributes.get("Data"));
+            AudioFile audioFile = AudioFileIO.read(track);
+            AudioHeader header = audioFile.getAudioHeader();
+
+            format = header.getFormat();
+            bitDepth = header.getBitsPerSample();
+            bitRate = header.getBitRate();
+            sampleRate = header.getSampleRate();
+
+            Log.d("Bitrate" , header.getBitRate());
+            Log.d("Sample Rate", header.getSampleRate());
+            Log.d("Bit Depth", "" + header.getBitsPerSample());
+            Log.d("Format", header.getFormat());
+        } catch (IOException ioE) {
+
+        } catch (CannotReadException cnrE) {
+
+        } catch (TagException tE) {
+
+        } catch (ReadOnlyFileException rofE) {
+
+        } catch (InvalidAudioFrameException iafE) {
+
+        }
+        holder.fileFormat.setText(format);
+        holder.bitRate.setText(bitRate + "kb/s");
+        holder.bitDepth.setText(bitDepth + " bits");
+        holder.sampleRate.setText(sampleRate + "KHz");
     }
 
     @Override

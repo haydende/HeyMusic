@@ -22,10 +22,18 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 
+import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 import java.util.HashMap;
 
+import org.jaudiotagger.audio.AudioFile;
 import org.jaudiotagger.audio.AudioFileIO;
+import org.jaudiotagger.audio.AudioHeader;
+import org.jaudiotagger.audio.exceptions.CannotReadException;
+import org.jaudiotagger.audio.exceptions.InvalidAudioFrameException;
+import org.jaudiotagger.audio.exceptions.ReadOnlyFileException;
+import org.jaudiotagger.tag.TagException;
 
 public class NowPlayingActivity extends AppCompatActivity {
 
@@ -70,16 +78,6 @@ public class NowPlayingActivity extends AppCompatActivity {
         playPauseButton = findViewById(R.id.nowPlayingButtons_playPause);
         forward = findViewById(R.id.nowPlayingButtons_forward);
         repeat = findViewById(R.id.nowPlayingButtons_repeat);
-
-        // AudioFileIO audioFile = AudioFileIO.read();
-
-        metadataRetriever.setDataSource(this, contentUri);
-        Log.d("metadataRetriever.extractMetadata ",
-                metadataRetriever.extractMetadata(
-                    MediaMetadataRetriever.METADATA_KEY_BITRATE
-                )
-        );
-
 
         shuffle.setOnClickListener((View v) -> {
             // TODO

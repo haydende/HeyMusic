@@ -59,6 +59,7 @@ public class SongGridAdapter extends RecyclerView.Adapter<SongGridAdapter.SongVi
                 newTrackAttributes.put("Title", getSongName(position));
                 newTrackAttributes.put("Album", getAlbumName(position));
                 newTrackAttributes.put("Artist", getArtistName(position));
+                newTrackAttributes.put("Data", getData(position));
 
                 NowPlayingActivity.setTrackAttributes(newTrackAttributes);
                 NowPlayingActivity.setAlbumCover(getAlbumCover(position));
@@ -223,6 +224,22 @@ public class SongGridAdapter extends RecyclerView.Adapter<SongGridAdapter.SongVi
         );
         Log.d("fileUri ", fileUri.toString());
         return fileUri;
+    }
+
+    /**
+     * Method for getting the DATA column header from the mediaStoreCursor for the track at
+     * {@code position}
+     *
+     * @param position int position for the record to go to in the mediaStoreCursor
+     * @return String contents of the DATA column in the mediaStoreCursor
+     */
+    private String getData(int position) {
+        mediaStoreCursor.moveToPosition(position);
+        return mediaStoreCursor.getString(
+                mediaStoreCursor.getColumnIndex(
+                        MediaStore.Audio.AudioColumns.DATA
+                )
+        );
     }
 
     private Cursor swapCursor(Cursor cursor) {
