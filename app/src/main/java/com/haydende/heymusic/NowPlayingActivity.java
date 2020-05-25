@@ -25,6 +25,8 @@ import android.widget.ImageButton;
 import java.io.IOException;
 import java.util.HashMap;
 
+import org.jaudiotagger.audio.AudioFileIO;
+
 public class NowPlayingActivity extends AppCompatActivity {
 
     private static Uri contentUri;
@@ -68,6 +70,8 @@ public class NowPlayingActivity extends AppCompatActivity {
         playPauseButton = findViewById(R.id.nowPlayingButtons_playPause);
         forward = findViewById(R.id.nowPlayingButtons_forward);
         repeat = findViewById(R.id.nowPlayingButtons_repeat);
+
+        // AudioFileIO audioFile = AudioFileIO.read();
 
         metadataRetriever.setDataSource(this, contentUri);
         Log.d("metadataRetriever.extractMetadata ",
