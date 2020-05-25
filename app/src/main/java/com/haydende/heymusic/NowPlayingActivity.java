@@ -11,7 +11,11 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.media.AudioManager;
+import android.media.MediaFormat;
+import android.media.MediaMetadata;
+import android.media.MediaMetadataRetriever;
 import android.media.MediaPlayer;
+import android.media.MediaPlayer.TrackInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -34,7 +38,8 @@ public class NowPlayingActivity extends AppCompatActivity {
     private static Bitmap coverArt;
 
     private static MediaPlayer player;
-
+    private static TrackInfo trackInfo[];
+    private static MediaMetadataRetriever metadataRetriever = new MediaMetadataRetriever();
     private RecyclerView recyclerView;
 
     private ImageButton shuffle;
@@ -48,8 +53,11 @@ public class NowPlayingActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_now_playing);
 
-        player = new MediaPlayer();
-        player.setAudioStreamType(AudioManager.STREAM_MUSIC);
+        new Thread(() -> {
+            player = MediaPlayer.create(this, contentUri);
+            trackInfo = player.getTrackInfo();
+            Log.d("player.getTrackInfo()", trackInfo[0].toString());
+        }).start();
 
         recyclerView = findViewById(R.id.nowPlayingRecyclerView);
         recyclerView.setLayoutManager(new GridLayoutManager(this, 1));
@@ -61,14 +69,13 @@ public class NowPlayingActivity extends AppCompatActivity {
         forward = findViewById(R.id.nowPlayingButtons_forward);
         repeat = findViewById(R.id.nowPlayingButtons_repeat);
 
-        new Thread(() -> {
-            try {
-                player.setDataSource(getApplicationContext(), contentUri);
-                player.prepare();
-            } catch (IOException ioE) {
-                Log.d("NowPlayingActivity - IOException Error", ioE.getLocalizedMessage());
-            }
-        }).start();
+        metadataRetriever.setDataSource(this, contentUri);
+        Log.d("metadataRetriever.extractMetadata ",
+                metadataRetriever.extractMetadata(
+                    MediaMetadataRetriever.METADATA_KEY_BITRATE
+                )
+        );
+
 
         shuffle.setOnClickListener((View v) -> {
             // TODO
