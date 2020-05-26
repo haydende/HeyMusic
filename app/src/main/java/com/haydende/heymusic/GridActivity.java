@@ -60,13 +60,19 @@ public class GridActivity extends AppCompatActivity
     private RecyclerView recyclerView;
     private RecyclerView.Adapter gridAdapter;
 
+    private ImageButton artistButton;
+
+    private ImageButton albumButton;
+
+    private ImageButton songButton;
+
     /**
      * {@link Enum} value to represent whether this Grid Layout will be showing ARTIST, ALBUM or
      * SONG data.
      *
      * @see ItemType
      */
-    private ItemType itemType = ItemType.SONG;
+    private static ItemType itemType = ItemType.SONG;
 
     /**
      * {@link String} array of MediaStore column headers for collecting Artist data.
@@ -101,6 +107,24 @@ public class GridActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        artistButton = findViewById(R.id.gridActivityButtons_artistButton);
+        artistButton.setOnClickListener((View v) -> {
+            itemType = ItemType.ARTIST;
+            recreate();
+        });
+
+        albumButton = findViewById(R.id.gridActivityButtons_albumButton);
+        albumButton.setOnClickListener((View v) -> {
+            itemType = ItemType.ALBUM;
+            recreate();
+        });
+
+        songButton = findViewById(R.id.gridActivityButtons_songButton);
+        songButton.setOnClickListener((View v) -> {
+            itemType = ItemType.SONG;
+            recreate();
+        });
 
         recyclerView = findViewById(R.id.recycler_view);
         GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 4);
