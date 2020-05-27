@@ -31,6 +31,7 @@
             android:layout_marginLeft="100dp"
             android:minWidth="60dp"
             android:minHeight="60dp"/>
+
         <ImageButton
             android:id="@+id/gridActivityButtons.albumButton"
             android:foreground="@drawable/ic_album_black_24dp"
@@ -38,6 +39,7 @@
             android:layout_height="wrap_content"
             android:minWidth="60dp"
             android:minHeight="60dp"/>
+
         <ImageButton
             android:id="@+id/gridActivityButtons.songButton"
             android:foreground="@drawable/ic_song_black_24dp"

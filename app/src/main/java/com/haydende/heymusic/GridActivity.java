@@ -39,6 +39,10 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import static com.haydende.heymusic.ItemType.ARTIST;
+import static com.haydende.heymusic.ItemType.ALBUM;
+import static com.haydende.heymusic.ItemType.SONG;
+
 public class GridActivity extends AppCompatActivity
     implements LoaderManager.LoaderCallbacks<Cursor> {
 
@@ -72,7 +76,7 @@ public class GridActivity extends AppCompatActivity
      *
      * @see ItemType
      */
-    private static ItemType itemType = ItemType.SONG;
+    private static ItemType itemType = SONG;
 
     /**
      * {@link String} array of MediaStore column headers for collecting Artist data.
@@ -110,20 +114,34 @@ public class GridActivity extends AppCompatActivity
 
         artistButton = findViewById(R.id.gridActivityButtons_artistButton);
         artistButton.setOnClickListener((View v) -> {
-            itemType = ItemType.ARTIST;
-            recreate();
+            if (itemType != ARTIST) {
+                itemType = ARTIST;
+                recyclerView.removeAllViews();
+                gridAdapter = new ArtistGridAdapter(this);
+                recyclerView.setAdapter(gridAdapter);
+                checkReadExternalStoragePermission();
+            }
         });
 
         albumButton = findViewById(R.id.gridActivityButtons_albumButton);
         albumButton.setOnClickListener((View v) -> {
-            itemType = ItemType.ALBUM;
-            recreate();
+            if (itemType != ALBUM)
+            itemType = ALBUM;
+            recyclerView.removeAllViews();
+            gridAdapter = new AlbumGridAdapter(this);
+            recyclerView.setAdapter(gridAdapter);
+            checkReadExternalStoragePermission();
         });
 
         songButton = findViewById(R.id.gridActivityButtons_songButton);
         songButton.setOnClickListener((View v) -> {
-            itemType = ItemType.SONG;
-            recreate();
+            if (itemType != SONG) {
+                itemType = SONG;
+                recyclerView.removeAllViews();
+                gridAdapter = new SongGridAdapter(this);
+                recyclerView.setAdapter(gridAdapter);
+                checkReadExternalStoragePermission();
+            }
         });
 
         recyclerView = findViewById(R.id.recycler_view);
