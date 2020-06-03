@@ -99,7 +99,6 @@ public class GridActivity extends AppCompatActivity
      */
     private final static String[] songProjection = {
             MediaStore.Audio.Media._ID,
-            MediaStore.Audio.Media.DISPLAY_NAME,
             MediaStore.Audio.Media.TITLE,
             MediaStore.Audio.Media.ALBUM,
             MediaStore.Audio.Media.ALBUM_ID,
@@ -169,7 +168,7 @@ public class GridActivity extends AppCompatActivity
      * <p>If so, the application needs to ensure that the user has given permission to access storage</p>
      */
     private void checkReadExternalStoragePermission() {
-        // check if device is using Marshmallow or above
+        // check if device is using Marshmallow (API Level 23) or above
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             // if the permission has been granted...
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) ==
