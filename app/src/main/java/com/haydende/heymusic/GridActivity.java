@@ -39,6 +39,10 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import static com.haydende.heymusic.ItemType.ARTIST;
+import static com.haydende.heymusic.ItemType.ALBUM;
+import static com.haydende.heymusic.ItemType.SONG;
+
 public class GridActivity extends AppCompatActivity
     implements LoaderManager.LoaderCallbacks<Cursor> {
 
@@ -60,13 +64,19 @@ public class GridActivity extends AppCompatActivity
     private RecyclerView recyclerView;
     private RecyclerView.Adapter gridAdapter;
 
+    private ImageButton artistButton;
+
+    private ImageButton albumButton;
+
+    private ImageButton songButton;
+
     /**
      * {@link Enum} value to represent whether this Grid Layout will be showing ARTIST, ALBUM or
      * SONG data.
      *
      * @see ItemType
      */
-    private ItemType itemType = ItemType.SONG;
+    private static ItemType itemType = SONG;
 
     /**
      * {@link String} array of MediaStore column headers for collecting Artist data.
@@ -101,6 +111,38 @@ public class GridActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        artistButton = findViewById(R.id.gridActivityButtons_artistButton);
+        artistButton.setOnClickListener((View v) -> {
+            if (itemType != ARTIST) {
+                itemType = ARTIST;
+                recyclerView.removeAllViews();
+                gridAdapter = new ArtistGridAdapter(this);
+                recyclerView.setAdapter(gridAdapter);
+                checkReadExternalStoragePermission();
+            }
+        });
+
+        albumButton = findViewById(R.id.gridActivityButtons_albumButton);
+        albumButton.setOnClickListener((View v) -> {
+            if (itemType != ALBUM)
+            itemType = ALBUM;
+            recyclerView.removeAllViews();
+            gridAdapter = new AlbumGridAdapter(this);
+            recyclerView.setAdapter(gridAdapter);
+            checkReadExternalStoragePermission();
+        });
+
+        songButton = findViewById(R.id.gridActivityButtons_songButton);
+        songButton.setOnClickListener((View v) -> {
+            if (itemType != SONG) {
+                itemType = SONG;
+                recyclerView.removeAllViews();
+                gridAdapter = new SongGridAdapter(this);
+                recyclerView.setAdapter(gridAdapter);
+                checkReadExternalStoragePermission();
+            }
+        });
 
         recyclerView = findViewById(R.id.recycler_view);
         GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 4);
