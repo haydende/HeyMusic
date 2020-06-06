@@ -66,7 +66,7 @@ public class GridActivity extends AppCompatActivity
      *
      * @see ItemType
      */
-    private ItemType itemType = ItemType.ARTIST;
+    private ItemType itemType = ItemType.SONG;
 
     /**
      * {@link String} array of MediaStore column headers for collecting Artist data.
@@ -89,9 +89,12 @@ public class GridActivity extends AppCompatActivity
      */
     private final static String[] songProjection = {
             MediaStore.Audio.Media._ID,
+            MediaStore.Audio.Media.DISPLAY_NAME,
             MediaStore.Audio.Media.TITLE,
+            MediaStore.Audio.Media.ALBUM,
             MediaStore.Audio.Media.ALBUM_ID,
-            MediaStore.Audio.Media.ARTIST_ID
+            MediaStore.Audio.Media.ARTIST,
+            MediaStore.Audio.Media.DATA
     };
 
     @Override

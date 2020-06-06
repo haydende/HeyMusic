@@ -10,28 +10,25 @@
         android:id="@+id/nowPlayingRecyclerView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="10dp"
+        app:layout_constraintBottom_toTopOf="@+id/nowPlayingButtons"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.03"
-        tools:listitem="@layout/now_playing_item"
-        tools:itemCount="1"/>
+
+        />
 
     <LinearLayout
         android:id="@+id/nowPlayingButtons"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="315dp"
+        android:layout_height="61dp"
         android:minHeight="60dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@id/nowPlayingRecyclerView"
-        app:layout_constraintHorizontal_bias="0.492"
+
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/nowPlayingRecyclerView"
-        app:layout_constraintVertical_bias="0.0">
+        app:layout_constraintTop_toBottomOf="@id/nowPlayingRecyclerView">
 
         <ImageButton
             android:id="@+id/nowPlayingButtons.shuffle"
+            android:foreground="@drawable/ic_shuffle_black_24dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:minWidth="60dp"
@@ -39,6 +36,7 @@
 
         <ImageButton
             android:id="@+id/nowPlayingButtons.rewind"
+            android:foreground="@drawable/ic_fast_rewind_black_24dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:minWidth="60dp"
@@ -46,6 +44,7 @@
 
         <ImageButton
             android:id="@+id/nowPlayingButtons.playPause"
+            android:foreground="@drawable/ic_play_arrow_black_24dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:minWidth="60dp"
@@ -53,6 +52,7 @@
 
         <ImageButton
             android:id="@+id/nowPlayingButtons.forward"
+            android:foreground="@drawable/ic_fast_forward_black_24dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:minWidth="60dp"
@@ -60,6 +60,7 @@
 
         <ImageButton
             android:id="@+id/nowPlayingButtons.repeat"
+            android:foreground="@drawable/ic_repeat_black_24dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:minWidth="60dp"

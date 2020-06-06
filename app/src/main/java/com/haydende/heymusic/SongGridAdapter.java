@@ -2,9 +2,11 @@ package com.haydende.heymusic;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -17,6 +19,8 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -45,8 +49,27 @@ public class SongGridAdapter extends RecyclerView.Adapter<SongGridAdapter.SongVi
         Bitmap bitmap = getAlbumCover(position);
         if (bitmap != null) {
             holder.getImageButton().setImageBitmap(bitmap);
-            holder.getTextView().setText(getSongName(position));
         }
+        holder.getImageButton().setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent nowPlaying = new Intent(activity, NowPlayingActivity.class);
+
+                HashMap<String, String> newTrackAttributes = new HashMap<>();
+                newTrackAttributes.put("Title", getSongName(position));
+                newTrackAttributes.put("Album", getAlbumName(position));
+                newTrackAttributes.put("Artist", getArtistName(position));
+                newTrackAttributes.put("Data", getData(position));
+
+                NowPlayingActivity.setTrackAttributes(newTrackAttributes);
+                NowPlayingActivity.setAlbumCover(getAlbumCover(position));
+                NowPlayingActivity.setContentUri(getUri(position));
+
+                // start the activity
+                activity.startActivity(nowPlaying);
+            }
+        });
+        holder.getTextView().setText(getSongName(position));
     }
 
     @Override
@@ -92,11 +115,53 @@ public class SongGridAdapter extends RecyclerView.Adapter<SongGridAdapter.SongVi
         public TextView getTextView() { return this.textView; }
     }
 
+    /**
+     * Private method for getting the Song Title from the {@link this#mediaStoreCursor}
+     * @param position Integer position for the mediaStoreCursor to point to
+     * @return String song title
+     *
+     * @see Cursor
+     * @see MediaStore
+     */
     private String getSongName(int position) {
         mediaStoreCursor.moveToPosition(position);
         return mediaStoreCursor.getString(
                 mediaStoreCursor.getColumnIndex(
                         MediaStore.Audio.Media.TITLE
+                )
+        );
+    }
+
+    /**
+     * Private method for getting the Album Title from the {@link this#mediaStoreCursor}
+     * @param position Integer position for the mediaStoreCursor to point to
+     * @return String album title
+     *
+     * @see Cursor
+     * @see MediaStore
+     */
+    private String getAlbumName(int position) {
+        mediaStoreCursor.moveToPosition(position);
+        return mediaStoreCursor.getString(
+                mediaStoreCursor.getColumnIndex(
+                        MediaStore.Audio.Media.ALBUM
+                )
+        );
+    }
+
+    /**
+     * Private method for getting the Artist Name from the {@link this#mediaStoreCursor}
+     * @param position Integer position for the mediaStoreCursor to point to
+     * @return String artist name
+     *
+     * @see Cursor
+     * @see MediaStore
+     */
+    private String getArtistName(int position) {
+        mediaStoreCursor.moveToPosition(position);
+        return mediaStoreCursor.getString(
+                mediaStoreCursor.getColumnIndex(
+                        MediaStore.Audio.Media.ARTIST
                 )
         );
     }
@@ -135,6 +200,46 @@ public class SongGridAdapter extends RecyclerView.Adapter<SongGridAdapter.SongVi
         Uri artworkUri = Uri.parse("content://media/external/audio/albumart");
         Uri imageUri = Uri.withAppendedPath(artworkUri, String.valueOf(albumID));
         return imageUri;
+    }
+
+    /**
+     * Method for getting the {@link Uri} for the track at position.
+     * @param position position for mediaStoreCursor to move to
+     * @return Uri object referencing the URI for the track at position in the mediaStoreCursor
+     */
+    private Uri getUri(int position) {
+        mediaStoreCursor.moveToPosition(position);
+        // get Uri for VOLUME_NAME (this will get the one for this specific file,
+        // making it adaptable)
+        Uri fileUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
+        // replace Uri value with old value + /_ID (to make it point to the specific track)
+        fileUri = Uri.parse(
+                fileUri.toString()
+                + "/"
+                + mediaStoreCursor.getString(
+                    mediaStoreCursor.getColumnIndex(
+                        MediaStore.Audio.Media._ID
+                    )
+                )
+        );
+        Log.d("fileUri ", fileUri.toString());
+        return fileUri;
+    }
+
+    /**
+     * Method for getting the DATA column header from the mediaStoreCursor for the track at
+     * {@code position}
+     *
+     * @param position int position for the record to go to in the mediaStoreCursor
+     * @return String contents of the DATA column in the mediaStoreCursor
+     */
+    private String getData(int position) {
+        mediaStoreCursor.moveToPosition(position);
+        return mediaStoreCursor.getString(
+                mediaStoreCursor.getColumnIndex(
+                        MediaStore.Audio.AudioColumns.DATA
+                )
+        );
     }
 
     private Cursor swapCursor(Cursor cursor) {
