@@ -1,10 +1,7 @@
-package com.haydende.heymusic;
+package com.haydende.heymusic.GridAdapter;
 
 import android.app.Activity;
-import android.content.Context;
 import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.net.Uri;
 import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,15 +12,14 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.io.IOException;
-import java.util.List;
+import com.haydende.heymusic.R;
 
 /**
  * Subclass of <code>RecyclerView</code>.<code>Adapter</code> that adapts the <code>artist</code>
  * data for use in UI components.
  */
 public class ArtistGridAdapter extends RecyclerView.Adapter<ArtistGridAdapter.ArtistViewHolder>
-implements GridAdapter{
+implements GridAdapter {
 
     private Cursor mediaStoreCursor;
 

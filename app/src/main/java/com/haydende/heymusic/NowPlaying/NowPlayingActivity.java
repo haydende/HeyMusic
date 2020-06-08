@@ -1,41 +1,20 @@
-package com.haydende.heymusic;
+package com.haydende.heymusic.NowPlaying;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.content.Intent;
-import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.drawable.Drawable;
-import android.media.AudioManager;
-import android.media.MediaFormat;
-import android.media.MediaMetadata;
-import android.media.MediaMetadataRetriever;
-import android.media.MediaPlayer;
-import android.media.MediaPlayer.TrackInfo;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.URI;
+import com.haydende.heymusic.MediaPlayerManager.MediaPlayerManager;
+import com.haydende.heymusic.GridAdapter.SongGridAdapter;
+import com.haydende.heymusic.R;
+
 import java.util.HashMap;
-
-import org.jaudiotagger.audio.AudioFile;
-import org.jaudiotagger.audio.AudioFileIO;
-import org.jaudiotagger.audio.AudioHeader;
-import org.jaudiotagger.audio.exceptions.CannotReadException;
-import org.jaudiotagger.audio.exceptions.InvalidAudioFrameException;
-import org.jaudiotagger.audio.exceptions.ReadOnlyFileException;
-import org.jaudiotagger.tag.TagException;
-
-import static com.haydende.heymusic.MediaPlayerManager.loadTrack;
 
 public class NowPlayingActivity extends AppCompatActivity {
 

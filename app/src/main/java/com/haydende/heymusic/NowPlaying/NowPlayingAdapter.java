@@ -1,6 +1,5 @@
-package com.haydende.heymusic;
+package com.haydende.heymusic.NowPlaying;
 
-import android.app.Activity;
 import android.graphics.Bitmap;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -12,6 +11,8 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.haydende.heymusic.R;
 
 import org.jaudiotagger.audio.AudioFile;
 import org.jaudiotagger.audio.AudioFileIO;

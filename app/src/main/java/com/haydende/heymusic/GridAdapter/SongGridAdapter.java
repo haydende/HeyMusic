@@ -1,12 +1,10 @@
-package com.haydende.heymusic;
+package com.haydende.heymusic.GridAdapter;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
-import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -18,10 +16,11 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.haydende.heymusic.NowPlaying.NowPlayingActivity;
+import com.haydende.heymusic.R;
+
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 /**
  * Subclass of <code>RecyclerView</code>.<code>Adapter</code> that adapts the <code>Song</code>

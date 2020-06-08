@@ -1,8 +1,5 @@
-package com.haydende.heymusic;
+package com.haydende.heymusic.CursorManagement;
 
-import android.app.Activity;
-import android.app.Application;
-import android.content.Context;
 import android.database.Cursor;
 import android.database.DataSetObserver;
 import android.net.Uri;
@@ -13,8 +10,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
-import androidx.lifecycle.Observer;
 import androidx.loader.app.LoaderManager;
 import androidx.loader.content.CursorLoader;
 import androidx.loader.content.Loader;
@@ -27,8 +22,6 @@ public class MediaStoreCursorLoader extends Fragment
     private static MediaStoreCursorLoader instance = new MediaStoreCursorLoader();
 
     private static Cursor cursor;
-
-    private static boolean cursorUpdate;
 
     private static NeedsCursor activity;
 
@@ -45,12 +38,6 @@ public class MediaStoreCursorLoader extends Fragment
     public static synchronized MediaStoreCursorLoader getInstance() {
         if (instance == null) {
             instance = new MediaStoreCursorLoader();
-            cursor.registerDataSetObserver(new DataSetObserver()  {
-
-                public void onChanged(Object o) {
-                    cursorUpdate = true;
-                }
-            });
         }
         return instance;
     }
@@ -89,11 +76,17 @@ public class MediaStoreCursorLoader extends Fragment
     @Override
     public void onLoadFinished(@NonNull Loader<Cursor> loader, Cursor data) {
         Log.d("Cursor finished?", "Cursor finished");
-        instance.activity.setCursor(data);
+        activity.setCursor(data);
     }
 
     @Override
     public void onLoaderReset(@NonNull Loader<Cursor> loader) {
         this.cursor = null;
+    }
+
+    public static interface NeedsCursor {
+
+        void setCursor(Cursor cursor);
+
     }
 }
