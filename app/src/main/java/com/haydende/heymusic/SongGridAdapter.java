@@ -27,7 +27,8 @@ import java.util.List;
  * Subclass of <code>RecyclerView</code>.<code>Adapter</code> that adapts the <code>Song</code>
  * data for use in UI components.
  */
-public class SongGridAdapter extends RecyclerView.Adapter<SongGridAdapter.SongViewHolder> {
+public class SongGridAdapter extends RecyclerView.Adapter<SongGridAdapter.SongViewHolder>
+implements GridAdapter {
 
     private Cursor mediaStoreCursor;
 

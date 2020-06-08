@@ -30,7 +30,8 @@ import java.util.List;
  * Subclass of <code>RecyclerView</code>.<code>Adapter</code> that adapts the <code>Album</code>
  * data for use in UI components.
  */
-public class AlbumGridAdapter extends RecyclerView.Adapter<AlbumGridAdapter.AlbumViewHolder> {
+public class AlbumGridAdapter extends RecyclerView.Adapter<AlbumGridAdapter.AlbumViewHolder>
+implements GridAdapter {
 
     private Cursor mediaStoreCursor;
 
