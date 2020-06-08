@@ -122,11 +122,12 @@ public class GridActivity extends AppCompatActivity implements NeedsCursor {
 
         albumButton = findViewById(R.id.gridActivityButtons_albumButton);
         albumButton.setOnClickListener((View v) -> {
-            if (itemType != ALBUM)
-            itemType = ALBUM;
-            recyclerView.removeAllViews();
-            setGridAdapter();
-            checkReadExternalStoragePermission();
+            if (itemType != ALBUM) {
+                itemType = ALBUM;
+                recyclerView.removeAllViews();
+                setGridAdapter();
+                checkReadExternalStoragePermission();
+            }
         });
 
         songButton = findViewById(R.id.gridActivityButtons_songButton);
