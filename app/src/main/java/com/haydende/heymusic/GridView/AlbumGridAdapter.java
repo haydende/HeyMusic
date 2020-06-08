@@ -1,4 +1,4 @@
-package com.haydende.heymusic.GridAdapter;
+package com.haydende.heymusic.GridView;
 
 import android.app.Activity;
 import android.database.Cursor;
@@ -167,7 +167,7 @@ implements GridAdapter {
         return Uri.parse(
                 mediaStoreCursor.getString(
                         mediaStoreCursor.getColumnIndex(
-                                "album_art"
+                                MediaStore.Audio.AlbumColumns.ALBUM_ART
                         )
                 )
         );

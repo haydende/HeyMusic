@@ -13,7 +13,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".NowPlaying.NowPlayingActivity"></activity>
-        <activity android:name=".GridAdapter.GridActivity">
+        <activity android:name=".GridView.GridActivity">
 
             <!-- Makes it so 'GridActivity' can be considered a launching activity -->
             <intent-filter>

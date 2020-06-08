@@ -1,4 +1,4 @@
-package com.haydende.heymusic.GridAdapter;
+package com.haydende.heymusic.GridView;
 
 public enum ItemType {
     ARTIST,

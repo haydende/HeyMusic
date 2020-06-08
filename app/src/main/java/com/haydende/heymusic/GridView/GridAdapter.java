@@ -1,8 +1,6 @@
-package com.haydende.heymusic.GridAdapter;
+package com.haydende.heymusic.GridView;
 
 import android.database.Cursor;
-
-import androidx.recyclerview.widget.RecyclerView;
 
 public interface GridAdapter {
 

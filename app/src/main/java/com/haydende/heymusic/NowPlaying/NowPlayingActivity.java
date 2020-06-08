@@ -11,7 +11,7 @@ import android.view.View;
 import android.widget.ImageButton;
 
 import com.haydende.heymusic.MediaPlayerManager.MediaPlayerManager;
-import com.haydende.heymusic.GridAdapter.SongGridAdapter;
+import com.haydende.heymusic.GridView.SongGridAdapter;
 import com.haydende.heymusic.R;
 
 import java.util.HashMap;
@@ -39,7 +39,7 @@ public class NowPlayingActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_now_playing);
+        setContentView(R.layout.now_playing_activity);
 
         MediaPlayerManager.loadTrack(this, contentUri);
 

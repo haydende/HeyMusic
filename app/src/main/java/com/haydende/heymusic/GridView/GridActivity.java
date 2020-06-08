@@ -1,8 +1,7 @@
-package com.haydende.heymusic.GridAdapter;
+package com.haydende.heymusic.GridView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
-import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.Manifest;
@@ -12,6 +11,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.Toast;
@@ -19,9 +19,9 @@ import android.widget.Toast;
 import com.haydende.heymusic.CursorManagement.MediaStoreCursorLoader;
 import com.haydende.heymusic.R;
 
-import static com.haydende.heymusic.GridAdapter.ItemType.ARTIST;
-import static com.haydende.heymusic.GridAdapter.ItemType.ALBUM;
-import static com.haydende.heymusic.GridAdapter.ItemType.SONG;
+import static com.haydende.heymusic.GridView.ItemType.ARTIST;
+import static com.haydende.heymusic.GridView.ItemType.ALBUM;
+import static com.haydende.heymusic.GridView.ItemType.SONG;
 
 public class GridActivity extends AppCompatActivity implements MediaStoreCursorLoader.NeedsCursor {
 
@@ -41,7 +41,8 @@ public class GridActivity extends AppCompatActivity implements MediaStoreCursorL
     private static Cursor mediaStoreCursor;
 
     private RecyclerView recyclerView;
-    private GridAdapter gridAdapter;
+
+    private static GridAdapter gridAdapter;
 
     private ImageButton artistButton;
 
@@ -89,14 +90,14 @@ public class GridActivity extends AppCompatActivity implements MediaStoreCursorL
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.grid_activity);
 
         artistButton = findViewById(R.id.gridActivityButtons_artistButton);
         artistButton.setOnClickListener((View v) -> {
             if (itemType != ARTIST) {
                 itemType = ARTIST;
                 recyclerView.removeAllViews();
-                setGridAdapter();
+                gridAdapter = new ArtistGridAdapter(this);
                 checkReadExternalStoragePermission();
             }
         });
@@ -106,7 +107,7 @@ public class GridActivity extends AppCompatActivity implements MediaStoreCursorL
             if (itemType != ALBUM) {
                 itemType = ALBUM;
                 recyclerView.removeAllViews();
-                setGridAdapter();
+                gridAdapter = new AlbumGridAdapter(this);
                 checkReadExternalStoragePermission();
             }
         });
@@ -116,13 +117,17 @@ public class GridActivity extends AppCompatActivity implements MediaStoreCursorL
             if (itemType != SONG) {
                 itemType = SONG;
                 recyclerView.removeAllViews();
-                setGridAdapter();
+                gridAdapter = new SongGridAdapter(this);
                 checkReadExternalStoragePermission();
             }
         });
 
         recyclerView = findViewById(R.id.recycler_view);
-        setGridAdapter();
+        recyclerView.removeAllViews();
+        if (gridAdapter == null)
+            gridAdapter = new SongGridAdapter(this);
+
+        recyclerView.setAdapter((RecyclerView.Adapter) gridAdapter);
 
         checkReadExternalStoragePermission();
     }
@@ -177,6 +182,7 @@ public class GridActivity extends AppCompatActivity implements MediaStoreCursorL
                 projection = songProjection;
                 break;
         }
+        Log.d("Projection ", projection[1]);
         MediaStoreCursorLoader.getInstance().setCursor(
            this,
             contentUri,
