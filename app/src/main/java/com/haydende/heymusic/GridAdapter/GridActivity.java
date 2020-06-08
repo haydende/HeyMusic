@@ -70,7 +70,8 @@ public class GridActivity extends AppCompatActivity implements MediaStoreCursorL
      */
     private static String[] albumProjection = {
             MediaStore.Audio.Albums._ID,
-            MediaStore.Audio.Albums.ALBUM
+            MediaStore.Audio.Albums.ALBUM,
+            MediaStore.Audio.Albums.ALBUM_ART
     };
 
     /**

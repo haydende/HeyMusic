@@ -141,22 +141,17 @@ implements GridAdapter {
      * @return Album cover to be used for ImageButton image
      */
     private Bitmap getAlbumCover(int position) {
-        int idIndex = mediaStoreCursor.getColumnIndex(MediaStore.Files.FileColumns._ID);
-        int mediaTypeIndex = mediaStoreCursor.getColumnIndex(MediaStore.Files.FileColumns.MEDIA_TYPE);
         try {
             Log.d("getAlbumCover", "Starting method... ");
             mediaStoreCursor.moveToPosition(position);
             Bitmap cover = MediaStore.Images.Media.getBitmap(
                     activity.getContentResolver(),
-                    getAlbumUri(
-                            mediaStoreCursor.getString(
-                                    mediaStoreCursor.getColumnIndex(
-                                        MediaStore.Audio.Albums._ID
-                            )))
+                    getAlbumArtUri(position)
             );
             Log.d("getAlbumCover", "Returning bitmap");
             return cover;
         } catch (IOException ioE) {
+            Log.e("getAlbumCover", "IOException thrown", ioE);
             Log.d("getAlbumCover", "Returning null");
             return null;
         }
@@ -164,12 +159,17 @@ implements GridAdapter {
 
     /**
      * Method for getting the album cover {@link Uri} for the album retrieved from {@code mediaStoreCursor}.
-     * @param albumID Album ID value taken from mediaStoreCursor
+     * @param position The position in the Cursor table for the album item
      * @return Album cover Uri for the image corresponding to albumID
      */
-    private Uri getAlbumUri(String albumID) {
-        Uri artworkUri = Uri.parse("content://media/external/audio/albumart");
-        Uri imageUri = Uri.withAppendedPath(artworkUri, String.valueOf(albumID));
-        return imageUri;
+    private Uri getAlbumArtUri(int position) {
+        mediaStoreCursor.moveToPosition(position);
+        return Uri.parse(
+                mediaStoreCursor.getString(
+                        mediaStoreCursor.getColumnIndex(
+                                "album_art"
+                        )
+                )
+        );
     }
 }
