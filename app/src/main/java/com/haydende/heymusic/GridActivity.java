@@ -43,8 +43,7 @@ import static com.haydende.heymusic.ItemType.ARTIST;
 import static com.haydende.heymusic.ItemType.ALBUM;
 import static com.haydende.heymusic.ItemType.SONG;
 
-public class GridActivity extends AppCompatActivity
-    implements LoaderManager.LoaderCallbacks<Cursor> {
+public class GridActivity extends AppCompatActivity {
 
     /**
      * Used to capture user's permission response for READ_EXTERNAL_STORAGE_PERMISSION.
@@ -62,7 +61,7 @@ public class GridActivity extends AppCompatActivity
     private static Cursor mediaStoreCursor;
 
     private RecyclerView recyclerView;
-    private RecyclerView.Adapter gridAdapter;
+    private GridAdapter gridAdapter;
 
     private ImageButton artistButton;
 
@@ -116,8 +115,7 @@ public class GridActivity extends AppCompatActivity
             if (itemType != ARTIST) {
                 itemType = ARTIST;
                 recyclerView.removeAllViews();
-                gridAdapter = new ArtistGridAdapter(this);
-                recyclerView.setAdapter(gridAdapter);
+                setGridAdapter();
                 checkReadExternalStoragePermission();
             }
         });
@@ -127,8 +125,7 @@ public class GridActivity extends AppCompatActivity
             if (itemType != ALBUM)
             itemType = ALBUM;
             recyclerView.removeAllViews();
-            gridAdapter = new AlbumGridAdapter(this);
-            recyclerView.setAdapter(gridAdapter);
+            setGridAdapter();
             checkReadExternalStoragePermission();
         });
 
@@ -137,8 +134,7 @@ public class GridActivity extends AppCompatActivity
             if (itemType != SONG) {
                 itemType = SONG;
                 recyclerView.removeAllViews();
-                gridAdapter = new SongGridAdapter(this);
-                recyclerView.setAdapter(gridAdapter);
+                setGridAdapter();
                 checkReadExternalStoragePermission();
             }
         });
@@ -146,19 +142,7 @@ public class GridActivity extends AppCompatActivity
         recyclerView = findViewById(R.id.recycler_view);
         GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 4);
         recyclerView.setLayoutManager(gridLayoutManager);
-        switch (itemType) {
-            case ARTIST:
-                gridAdapter = new ArtistGridAdapter(this);
-                break;
-            case ALBUM:
-                gridAdapter = new AlbumGridAdapter(this);
-                break;
-            case SONG:
-            default:
-                gridAdapter = new SongGridAdapter(this);
-                break;
-        }
-        recyclerView.setAdapter(gridAdapter);
+        setGridAdapter();
 
         checkReadExternalStoragePermission();
     }
@@ -173,7 +157,9 @@ public class GridActivity extends AppCompatActivity
             // if the permission has been granted...
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) ==
                     PackageManager.PERMISSION_GRANTED) {
-                getSupportLoaderManager().initLoader(MEDIASTORE_LOADER_ID, null, this);
+                createCursor();
+                gridAdapter.changeCursor(MediaStoreCursorLoader.getInstance().getCursor());
+
                 // if permission has not been granted
             } else {
                 // determine if the application should show a custom permission request
@@ -188,16 +174,17 @@ public class GridActivity extends AppCompatActivity
                         READ_EXTERNAL_STORAGE_PERMISSION);
             }
         } else {
-            getSupportLoaderManager().initLoader(MEDIASTORE_LOADER_ID, null ,this);
+            // getSupportLoaderManager().initLoader(MEDIASTORE_LOADER_ID, null ,this);
+            createCursor();
         }
     }
 
-    @NonNull
-    @Override
-    public Loader<Cursor> onCreateLoader(int id, @Nullable Bundle args) {
+    public void createCursor() {
+        Uri contentUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
         String[] projection = albumProjection;
         String selection = null;
-        Uri contentUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
+        String[] selectionArgs = null;
+        String sortOrder = null;
         switch (itemType) {
             case ARTIST:
                 projection = artistProjection;
@@ -212,43 +199,29 @@ public class GridActivity extends AppCompatActivity
                 projection = songProjection;
                 break;
         }
-        return new CursorLoader(
-                this,
-                contentUri,
-                projection,
-                selection,
-                null,
-                null
+        MediaStoreCursorLoader.getInstance().setCursor(
+           this,
+            contentUri,
+            projection,
+            selection,
+            selectionArgs,
+            sortOrder
         );
     }
 
-    @Override
-    public void onLoadFinished(@NonNull Loader<Cursor> loader, Cursor data) {
+    private void setGridAdapter() {
         switch (itemType) {
-            case ARTIST:
-                ((ArtistGridAdapter) gridAdapter).changeCursor(data);
+            case SONG:
+                gridAdapter = new SongGridAdapter(this);
                 break;
             case ALBUM:
-                ((AlbumGridAdapter) gridAdapter).changeCursor(data);
+                gridAdapter = new AlbumGridAdapter(this);
                 break;
-            case SONG:
-            default:
-                ((SongGridAdapter) gridAdapter).changeCursor(data);
+            case ARTIST:
+                gridAdapter = new ArtistGridAdapter(this);
+                break;
         }
+        recyclerView.setAdapter((RecyclerView.Adapter) gridAdapter);
     }
 
-    @Override
-    public void onLoaderReset(@NonNull Loader<Cursor> loader) {
-        switch (itemType) {
-            case ARTIST:
-                ((ArtistGridAdapter) gridAdapter).changeCursor(null);
-                break;
-            case ALBUM:
-                ((AlbumGridAdapter) gridAdapter).changeCursor(null);
-                break;
-            case SONG:
-            default:
-                ((SongGridAdapter) gridAdapter).changeCursor(null);
-        }
-    }
 }
