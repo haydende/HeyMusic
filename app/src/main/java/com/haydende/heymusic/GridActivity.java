@@ -43,7 +43,7 @@ import static com.haydende.heymusic.ItemType.ARTIST;
 import static com.haydende.heymusic.ItemType.ALBUM;
 import static com.haydende.heymusic.ItemType.SONG;
 
-public class GridActivity extends AppCompatActivity {
+public class GridActivity extends AppCompatActivity implements NeedsCursor {
 
     /**
      * Used to capture user's permission response for READ_EXTERNAL_STORAGE_PERMISSION.
@@ -158,8 +158,6 @@ public class GridActivity extends AppCompatActivity {
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) ==
                     PackageManager.PERMISSION_GRANTED) {
                 createCursor();
-                gridAdapter.changeCursor(MediaStoreCursorLoader.getInstance().getCursor());
-
                 // if permission has not been granted
             } else {
                 // determine if the application should show a custom permission request
@@ -207,6 +205,10 @@ public class GridActivity extends AppCompatActivity {
             selectionArgs,
             sortOrder
         );
+    }
+
+    public void setCursor(Cursor cursor) {
+        gridAdapter.changeCursor(cursor);
     }
 
     private void setGridAdapter() {
