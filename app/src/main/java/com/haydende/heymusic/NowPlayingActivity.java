@@ -35,6 +35,8 @@ import org.jaudiotagger.audio.exceptions.InvalidAudioFrameException;
 import org.jaudiotagger.audio.exceptions.ReadOnlyFileException;
 import org.jaudiotagger.tag.TagException;
 
+import static com.haydende.heymusic.MediaPlayerManager.loadTrack;
+
 public class NowPlayingActivity extends AppCompatActivity {
 
     private static Uri contentUri;
@@ -47,9 +49,6 @@ public class NowPlayingActivity extends AppCompatActivity {
 
     private static Bitmap coverArt;
 
-    private static MediaPlayer player;
-    private static TrackInfo trackInfo[];
-    private static MediaMetadataRetriever metadataRetriever = new MediaMetadataRetriever();
     private RecyclerView recyclerView;
 
     private ImageButton shuffle;
@@ -63,11 +62,7 @@ public class NowPlayingActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_now_playing);
 
-        new Thread(() -> {
-            player = MediaPlayer.create(this, contentUri);
-            trackInfo = player.getTrackInfo();
-            Log.d("player.getTrackInfo()", trackInfo[0].toString());
-        }).start();
+        MediaPlayerManager.loadTrack(this, contentUri);
 
         recyclerView = findViewById(R.id.nowPlayingRecyclerView);
         recyclerView.setLayoutManager(new GridLayoutManager(this, 1));
@@ -79,41 +74,47 @@ public class NowPlayingActivity extends AppCompatActivity {
         forward = findViewById(R.id.nowPlayingButtons_forward);
         repeat = findViewById(R.id.nowPlayingButtons_repeat);
 
+        MediaPlayerManager.togglePlayback();
+        togglePlayButton();
+
+        /* Set the onClickListeners for the playback control buttons */
+
         shuffle.setOnClickListener((View v) -> {
             // TODO
         });
 
         rewind.setOnClickListener((View v) -> {
-            player.seekTo(0);
+            MediaPlayerManager.skipToBeginning();
         });
 
         playPauseButton.setOnClickListener((View v) -> {
-            if (player.isPlaying()) {
-                player.pause();
-                playPauseButton.setForeground(
-                        getResources().getDrawable(
-                                R.drawable.ic_play_arrow_black_24dp,
-                                null
-                        )
-                );
-            } else {
-                player.start();
-                playPauseButton.setForeground(
-                        getResources().getDrawable(
-                                R.drawable.ic_pause_black_24dp,
-                                null
-                        )
-                );
-            }
+            MediaPlayerManager.togglePlayback();
+            togglePlayButton();
         });
 
         forward.setOnClickListener((View v) -> {
-            player.seekTo(player.getDuration());
+            MediaPlayerManager.skipToEnd();
         });
 
         repeat.setOnClickListener((View v) -> {
-            player.setLooping(player.isLooping() ? false : true);
+            MediaPlayerManager.toggleLooping();
         });
+    }
+
+    private void togglePlayButton() {
+        if (MediaPlayerManager.isPlaying()) {
+            playPauseButton.setForeground(
+                    getResources().getDrawable(
+                            R.drawable.ic_pause_black_24dp
+                    )
+            );
+        } else {
+            playPauseButton.setForeground(
+                    getResources().getDrawable(
+                            R.drawable.ic_play_arrow_black_24dp
+                    )
+            );
+        }
     }
 
     /**
