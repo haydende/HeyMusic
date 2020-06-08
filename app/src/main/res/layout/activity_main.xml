@@ -10,11 +10,11 @@
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_view"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_weight="1000"
         tools:listitem="@layout/album_item"
-        tools:itemCount="2"/>
+        tools:itemCount="4"/>
 
     <LinearLayout
         android:id="@+id/gridActivityButtons"

@@ -8,10 +8,11 @@
     android:layout_marginStart="8dp"
     android:layout_marginTop="8dp">
 
-    <RelativeLayout
+    <LinearLayout
         android:id="@+id/albumLayout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:orientation="vertical"
         android:padding="1dp">
 
         <ImageButton
@@ -27,5 +28,5 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
         </TextView>
-    </RelativeLayout>
+    </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
