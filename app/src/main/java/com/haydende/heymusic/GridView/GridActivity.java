@@ -30,6 +30,8 @@ public class GridActivity extends AppCompatActivity implements MediaStoreCursorL
      */
     private final static int READ_EXTERNAL_STORAGE_PERMISSION = 0;
 
+    private final static MediaStoreCursorLoader mediaStoreCursorLoader = MediaStoreCursorLoader.getInstance();
+
     /**
      * ID for the MediaStore loader used to gather audio files.
      */
@@ -61,7 +63,7 @@ public class GridActivity extends AppCompatActivity implements MediaStoreCursorL
     /**
      * {@link String} array of MediaStore column headers for collecting Artist data.
      */
-    private static String[] artistProjection = {
+    private final static String[] artistProjection = {
             MediaStore.Audio.Artists._ID,
             MediaStore.Audio.Artists.ARTIST
     };
@@ -69,7 +71,7 @@ public class GridActivity extends AppCompatActivity implements MediaStoreCursorL
     /**
      * {@link String} array of MediaStore column headers for collecting Album data.
      */
-    private static String[] albumProjection = {
+    private final static String[] albumProjection = {
             MediaStore.Audio.Albums._ID,
             MediaStore.Audio.Albums.ALBUM,
             MediaStore.Audio.Albums.ALBUM_ART
@@ -91,6 +93,13 @@ public class GridActivity extends AppCompatActivity implements MediaStoreCursorL
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.grid_activity);
+        if (gridAdapter == null) {
+            gridAdapter = new SongGridAdapter(this);
+        }
+
+        Log.d("onCreate() method", "GridAdapter: " + gridAdapter.toString());
+
+        recyclerView = findViewById(R.id.recycler_view);
 
         artistButton = findViewById(R.id.gridActivityButtons_artistButton);
         artistButton.setOnClickListener((View v) -> {
@@ -122,12 +131,7 @@ public class GridActivity extends AppCompatActivity implements MediaStoreCursorL
             }
         });
 
-        recyclerView = findViewById(R.id.recycler_view);
-        recyclerView.removeAllViews();
-        if (gridAdapter == null)
-            gridAdapter = new SongGridAdapter(this);
-
-        recyclerView.setAdapter((RecyclerView.Adapter) gridAdapter);
+        setGridAdapter();
 
         checkReadExternalStoragePermission();
     }
@@ -163,30 +167,17 @@ public class GridActivity extends AppCompatActivity implements MediaStoreCursorL
     }
 
     public void createCursor() {
-        Uri contentUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
-        String[] projection = albumProjection;
         String selection = null;
         String[] selectionArgs = null;
         String sortOrder = null;
-        switch (itemType) {
-            case ARTIST:
-                projection = artistProjection;
-                contentUri = MediaStore.Audio.Artists.EXTERNAL_CONTENT_URI;
-                break;
-            case ALBUM:
-                projection = albumProjection;
-                contentUri = MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI;
-                break;
-            case SONG:
-            default:
-                projection = songProjection;
-                break;
-        }
-        Log.d("Projection ", projection[1]);
-        MediaStoreCursorLoader.getInstance().setCursor(
+        setGridAdapter();
+        Log.d("createCursor() method", "URI: " + getContentUri().toString());
+        Log.d("createCursor() method", "Adapter Type: " + recyclerView.getAdapter());
+        Log.i("GridActivity", "Calling for new Cursor");
+        mediaStoreCursorLoader.setCursor(
            this,
-            contentUri,
-            projection,
+            getContentUri(),
+            getProjection(),
             selection,
             selectionArgs,
             sortOrder
@@ -194,10 +185,14 @@ public class GridActivity extends AppCompatActivity implements MediaStoreCursorL
     }
 
     public void setCursor(Cursor cursor) {
+        Log.i("GridAdapter", "New Cursor has been loaded");
+        Log.d("setCursor() method", "Cursor column 1: " + cursor.getColumnName(1));
+        setGridAdapter();
         gridAdapter.changeCursor(cursor);
     }
 
     private void setGridAdapter() {
+        Log.d("GridActivity", "Setting Adapter");
         switch (itemType) {
             case SONG:
                 gridAdapter = new SongGridAdapter(this);
@@ -210,6 +205,37 @@ public class GridActivity extends AppCompatActivity implements MediaStoreCursorL
                 break;
         }
         recyclerView.setAdapter((RecyclerView.Adapter) gridAdapter);
+        Log.i("GridActivity", "Using " + recyclerView.getAdapter());
+    }
+
+    private Uri getContentUri() {
+        switch (itemType) {
+            case ARTIST:
+                Log.i("GridActivity", "Using Artist URI");
+                return MediaStore.Audio.Artists.EXTERNAL_CONTENT_URI;
+            case ALBUM:
+                Log.i("GridActivity", "Using Album URI");
+                return MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI;
+            case SONG:
+            default:
+                Log.i("GridActivity", "Using Song URI");
+                return MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
+        }
+    }
+
+    private String[] getProjection() {
+        switch (itemType) {
+            case ARTIST:
+                Log.i("GridActivity", "Using Artist data");
+                return artistProjection;
+            case ALBUM:
+                Log.i("GridActivity", "Using Album data");
+                return albumProjection;
+            case SONG:
+            default:
+                Log.i("GridActivity", "Using Song data");
+                return songProjection;
+        }
     }
 
 }
