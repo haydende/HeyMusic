@@ -3,6 +3,7 @@ package com.haydende.heymusic.GridView;
 import android.app.Activity;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.util.Log;
@@ -16,8 +17,6 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.haydende.heymusic.R;
-
-import java.io.IOException;
 
 /**
  * Subclass of <code>RecyclerView</code>.<code>Adapter</code> that adapts the <code>Album</code>
@@ -142,17 +141,22 @@ implements GridAdapter {
      */
     private Bitmap getAlbumCover(int position) {
         try {
-            Log.d("getAlbumCover", "Starting method... ");
+            Log.d("AlbumGridAdapter.getAlbumCover", "Starting method... ");
             mediaStoreCursor.moveToPosition(position);
-            Bitmap cover = MediaStore.Images.Media.getBitmap(
-                    activity.getContentResolver(),
-                    getAlbumArtUri(position)
+            Bitmap cover = BitmapFactory.decodeFile(
+                    mediaStoreCursor.getString(
+                            mediaStoreCursor.getColumnIndex(
+                                    MediaStore.Audio.Albums.ALBUM_ART
+                            )
+                    )
             );
-            Log.d("getAlbumCover", "Returning bitmap");
+
+            Log.d("AlbumGridAdapter.getAlbumCover", "Returning bitmap");
             return cover;
-        } catch (IOException ioE) {
-            Log.e("getAlbumCover", "IOException thrown", ioE);
-            Log.d("getAlbumCover", "Returning null");
+        } catch (IllegalStateException isE) {
+            //Log.e("AlbumGridAdapter.getAlbumCover", "IOException thrown", isE);
+            // Log.d("AlbumGridAdapter Class", "getAlbumCover() method - Column Invalid");
+            Log.d("AlbumGridAdapter.getAlbumCover", "Returning null");
             return null;
         }
     }
@@ -171,5 +175,9 @@ implements GridAdapter {
                         )
                 )
         );
+    }
+
+    public String toString() {
+        return "AlbumGridAdapter";
     }
 }

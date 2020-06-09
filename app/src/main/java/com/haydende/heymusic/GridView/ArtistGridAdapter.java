@@ -116,5 +116,8 @@ implements GridAdapter {
         }
     }
 
+    public String toString() {
+        return "ArtistGridAdapter";
+    }
 
 }

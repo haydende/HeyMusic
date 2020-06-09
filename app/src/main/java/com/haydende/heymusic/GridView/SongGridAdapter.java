@@ -260,4 +260,8 @@ implements GridAdapter {
             oldCursor.close();
         }
     }
+
+    public String toString() {
+        return "SongGridAdapter";
+    }
 }

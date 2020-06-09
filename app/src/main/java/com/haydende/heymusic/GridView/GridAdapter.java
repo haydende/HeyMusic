@@ -6,4 +6,6 @@ public interface GridAdapter {
 
     void changeCursor(Cursor cursor);
 
+    String toString();
+
 }
