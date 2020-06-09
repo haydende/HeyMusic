@@ -22,8 +22,6 @@ public class MediaStoreCursorLoader extends Fragment
 
     private static Loader<Cursor> loader;
 
-    private static Cursor cursor;
-
     private static NeedsCursor activity;
 
     private static Uri contentUri;
@@ -53,19 +51,14 @@ public class MediaStoreCursorLoader extends Fragment
         MediaStoreCursorLoader.selection = selection;
         MediaStoreCursorLoader.selectionArgs = selectionArgs;
         MediaStoreCursorLoader.sortOrder = sortOrder;
+        LoaderManager loaderManager = LoaderManager.getInstance((AppCompatActivity) activity);
         if (loader != null) {
-            // loader.reset();
+            loaderManager.restartLoader(MEDIASTORE_LOADER_ID, null, instance);
             Log.i("MediaStoreCursorLoader", "Existing loader; Started loading");
-            loader.startLoading();
         } else {
             Log.i("MediaStoreCursorLoader", "No existing loader; Initialising...");
-            LoaderManager loaderManager = LoaderManager.getInstance((AppCompatActivity) activity);
             loaderManager.initLoader(MEDIASTORE_LOADER_ID, null, instance);
         }
-    }
-
-    public Cursor getCursor() {
-        return cursor;
     }
 
     @NonNull
@@ -87,21 +80,10 @@ public class MediaStoreCursorLoader extends Fragment
 
     @Override
     public void onLoadFinished(@NonNull Loader<Cursor> loader, Cursor data) {
-
         Log.i("MediaStoreCursorLoader", "Cursor finished");
-        //Log.d("onLoadFinished() method", "Cursor column 1: " +
-        //        data.getColumnName(1));
-        if (MediaStoreCursorLoader.cursor == data) {
-            Log.i("MediaStoreCursorLoader", "Forcing Load...");
-            MediaStoreCursorLoader.loader = null;
-            LoaderManager loaderManager = LoaderManager.getInstance(
-                    (AppCompatActivity) MediaStoreCursorLoader.activity
-            );
-            loaderManager.initLoader(MEDIASTORE_LOADER_ID, null, instance);
-        }
         MediaStoreCursorLoader.loader = loader;
-        MediaStoreCursorLoader.cursor = data;
         activity.setCursor(data);
+        Log.i("MediaStoreCursorLoader", "Cursor has been sent");
     }
 
     @Override
@@ -110,7 +92,7 @@ public class MediaStoreCursorLoader extends Fragment
         activity.setCursor(null);
     }
 
-    public static interface NeedsCursor {
+    public interface NeedsCursor {
 
         void setCursor(Cursor cursor);
 
