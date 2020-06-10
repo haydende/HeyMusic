@@ -1,12 +1,15 @@
 package com.haydende.heymusic.GridView;
 
 import android.app.Activity;
+import android.content.ContentResolver;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.Build;
 import android.provider.MediaStore;
 import android.util.Log;
+import android.util.Size;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,9 +17,13 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.haydende.heymusic.R;
+
+import java.io.IOException;
 
 /**
  * Subclass of <code>RecyclerView</code>.<code>Adapter</code> that adapts the <code>Album</code>
@@ -27,9 +34,9 @@ implements GridAdapter {
 
     private Cursor mediaStoreCursor;
 
-    private final Activity activity;
+    private final AppCompatActivity activity;
 
-    public AlbumGridAdapter(Activity activity) {
+    public AlbumGridAdapter(AppCompatActivity activity) {
         this.activity = activity;
     }
 
@@ -141,22 +148,29 @@ implements GridAdapter {
      */
     private Bitmap getAlbumCover(int position) {
         try {
-            Log.d("AlbumGridAdapter.getAlbumCover", "Starting method... ");
+            Log.d("AlbumGridAdapter", "Starting method... ");
             mediaStoreCursor.moveToPosition(position);
-            Bitmap cover = BitmapFactory.decodeFile(
-                    mediaStoreCursor.getString(
-                            mediaStoreCursor.getColumnIndex(
-                                    MediaStore.Audio.Albums.ALBUM_ART
-                            )
+            String albumArt = mediaStoreCursor.getString(
+                    mediaStoreCursor.getColumnIndex(
+                            "album_art"
                     )
             );
-
-            Log.d("AlbumGridAdapter.getAlbumCover", "Returning bitmap");
+            Log.i("AlbumGridAdapter", String.format("Cover art for album %d: %s", position, albumArt));
+            Bitmap cover = null;
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
+                Log.i("AlbumGridAdapter", "Recognised Android Q");
+                cover = activity.getApplicationContext().getContentResolver().loadThumbnail(
+                        getUri(position),
+                        new Size(200, 200),
+                        null
+                );
+            } else {
+                cover = BitmapFactory.decodeFile(albumArt);
+            }
+            Log.i("AlbumGridAdapter", "Returning loaded: " + ((cover == null) ? "null" : cover.toString()));
             return cover;
-        } catch (IllegalStateException isE) {
-            //Log.e("AlbumGridAdapter.getAlbumCover", "IOException thrown", isE);
-            // Log.d("AlbumGridAdapter Class", "getAlbumCover() method - Column Invalid");
-            Log.d("AlbumGridAdapter.getAlbumCover", "Returning null");
+        } catch (IllegalStateException | IOException isE) {
+            Log.i("AlbumGridAdapter", "Returning null");
             return null;
         }
     }
@@ -166,12 +180,14 @@ implements GridAdapter {
      * @param position The position in the Cursor table for the album item
      * @return Album cover Uri for the image corresponding to albumID
      */
-    private Uri getAlbumArtUri(int position) {
+    private Uri getUri(int position) {
         mediaStoreCursor.moveToPosition(position);
         return Uri.parse(
+                MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI +
+                        "/" +
                 mediaStoreCursor.getString(
                         mediaStoreCursor.getColumnIndex(
-                                MediaStore.Audio.AlbumColumns.ALBUM_ART
+                                MediaStore.Audio.Albums._ID
                         )
                 )
         );

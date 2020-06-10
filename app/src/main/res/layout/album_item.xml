@@ -4,8 +4,8 @@
     android:id="@+id/albumItem"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:minHeight="150dp"
-    android:minWidth="105dp"
+    android:maxHeight="160dp"
+    android:maxWidth="105dp"
     android:layout_marginStart="2dp"
     android:layout_marginTop="2dp">
 
@@ -19,12 +19,9 @@
             android:id="@+id/albumLayout.imageButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:minWidth="105dp"
-            android:maxWidth="105dp"
-            android:minHeight="105dp"
-            android:maxHeight="105dp"
+            android:scaleType="fitCenter"
             android:adjustViewBounds="true"
-            android:scaleType="centerInside"/>
+            android:backgroundTint="#FFFFFF"/>
         <TextView
             android:id="@+id/albumLayout.text"
             android:text="Placeholder"
