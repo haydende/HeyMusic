@@ -21,6 +21,9 @@ import com.haydende.heymusic.R;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * Subclass of <code>RecyclerView</code>.<code>Adapter</code> that adapts the <code>Song</code>
@@ -31,6 +34,8 @@ implements GridAdapter {
 
     private Cursor mediaStoreCursor;
 
+    private ExecutorService threadPool = Executors.newFixedThreadPool(4);
+
     private final Activity activity;
 
     public SongGridAdapter(Activity activity) {
@@ -40,36 +45,45 @@ implements GridAdapter {
     @Override
     public SongGridAdapter.SongViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.song_item, parent, false);
+                .inflate(R.layout.grid_item, parent, false);
         return new SongGridAdapter.SongViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull SongGridAdapter.SongViewHolder holder, int position) {
-        Bitmap bitmap = getAlbumCover(position);
-        if (bitmap != null) {
-            holder.getImageButton().setImageBitmap(bitmap);
-        }
         holder.getImageButton().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent nowPlaying = new Intent(activity, NowPlayingActivity.class);
 
-                HashMap<String, String> newTrackAttributes = new HashMap<>();
-                newTrackAttributes.put("Title", getSongName(position));
-                newTrackAttributes.put("Album", getAlbumName(position));
-                newTrackAttributes.put("Artist", getArtistName(position));
-                newTrackAttributes.put("Data", getData(position));
+                new Thread(() -> {
+                    HashMap<String, String> newTrackAttributes = new HashMap<>();
+                    newTrackAttributes.put("Title", getSongName(position));
+                    newTrackAttributes.put("Album", getAlbumName(position));
+                    newTrackAttributes.put("Artist", getArtistName(position));
+                    newTrackAttributes.put("Data", getData(position));
 
-                NowPlayingActivity.setTrackAttributes(newTrackAttributes);
-                NowPlayingActivity.setAlbumCover(getAlbumCover(position));
-                NowPlayingActivity.setContentUri(getUri(position));
-
+                    NowPlayingActivity.setTrackAttributes(newTrackAttributes);
+                    NowPlayingActivity.setAlbumCover(getAlbumCover(position));
+                    NowPlayingActivity.setContentUri(getUri(position));
+                }).start();
                 // start the activity
                 activity.startActivity(nowPlaying);
             }
         });
-        holder.getTextView().setText(getSongName(position));
+        String songName = getSongName(position);
+        try {
+            // Uses executor thread to get the album cover
+            holder.getImageButton().setImageBitmap(threadPool.submit(() -> getAlbumCover(position)).get());
+            // Uses executor thread to get the song title
+            holder.getTextView().setText(threadPool.submit(() -> getSongName(position)).get());
+        } catch (ExecutionException e) {
+            // e.printStackTrace();
+        } catch (InterruptedException e) {
+            // e.printStackTrace();
+        }
+
+        holder.getTextView().setText(songName);
     }
 
     @Override
@@ -98,8 +112,8 @@ implements GridAdapter {
          */
         public SongViewHolder(View itemView) {
             super(itemView);
-            imageButton = itemView.findViewById(R.id.songLayout_imageButton);
-            textView = itemView.findViewById(R.id.songLayout_text);
+            imageButton = itemView.findViewById(R.id.gridItem_imageButton);
+            textView = itemView.findViewById(R.id.gridItem_textView);
         }
 
         /**
@@ -172,10 +186,11 @@ implements GridAdapter {
      * @return Album cover to be used for ImageButton image
      */
     private Bitmap getAlbumCover(int position) {
+        Log.d("getAlbumCover", "Starting method... ");
+        Bitmap cover = null;
         try {
-            Log.d("getAlbumCover", "Starting method... ");
             mediaStoreCursor.moveToPosition(position);
-            Bitmap cover = MediaStore.Images.Media.getBitmap(
+            cover = MediaStore.Images.Media.getBitmap(
                     activity.getContentResolver(),
                     getAlbumUri(
                             mediaStoreCursor.getString(
@@ -183,12 +198,11 @@ implements GridAdapter {
                                             MediaStore.Audio.Media.ALBUM_ID
                                     )))
             );
-            Log.d("getAlbumCover", "Returning bitmap");
-            return cover;
         } catch (IOException ioE) {
             Log.d("getAlbumCover", "Returning null");
-            return null;
         }
+        Log.d("getAlbumCover", "Returning bitmap");
+        return cover;
     }
 
     /**
