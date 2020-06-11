@@ -43,7 +43,7 @@ implements GridAdapter {
     @Override
     public AlbumViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.album_item, parent, false);
+                .inflate(R.layout.grid_item, parent, false);
         return new AlbumViewHolder(view);
     }
 
@@ -82,8 +82,8 @@ implements GridAdapter {
          */
         public AlbumViewHolder(View itemView) {
             super(itemView);
-            imageButton = itemView.findViewById(R.id.albumLayout_imageButton);
-            textView = itemView.findViewById(R.id.albumLayout_text);
+            imageButton = itemView.findViewById(R.id.gridItem_imageButton);
+            textView = itemView.findViewById(R.id.gridItem_textView);
         }
 
         /**

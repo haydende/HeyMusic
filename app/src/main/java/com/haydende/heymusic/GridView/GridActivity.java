@@ -186,7 +186,7 @@ public class GridActivity extends AppCompatActivity implements MediaStoreCursorL
 
     public void setCursor(Cursor cursor) {
         Log.i("GridAdapter", "New Cursor has been loaded");
-        Log.i("GridActivity", "New Cursor column 2: " + cursor.getColumnName(2));
+        // Log.i("GridActivity", "New Cursor column 1: " + cursor.getColumnName(2));
         setGridAdapter();
         gridAdapter.changeCursor(cursor);
     }

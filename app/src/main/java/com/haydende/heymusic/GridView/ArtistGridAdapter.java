@@ -32,7 +32,7 @@ implements GridAdapter {
     @Override
     public ArtistViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.artist_item, parent, false);
+                .inflate(R.layout.grid_item, parent, false);
         return new ArtistViewHolder(view);
     }
 
@@ -71,8 +71,8 @@ implements GridAdapter {
          */
         public ArtistViewHolder(View itemView) {
             super(itemView);
-            imageButton = itemView.findViewById(R.id.artistLayout_imageButton);
-            textView = itemView.findViewById(R.id.artistLayout_textView);
+            imageButton = itemView.findViewById(R.id.gridItem_imageButton);
+            textView = itemView.findViewById(R.id.gridItem_textView);
         }
 
         /**
