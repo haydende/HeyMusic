@@ -58,10 +58,16 @@ implements GridAdapter {
 
                 new Thread(() -> {
                     HashMap<String, String> newTrackAttributes = new HashMap<>();
-                    newTrackAttributes.put("Title", getSongName(position));
-                    newTrackAttributes.put("Album", getAlbumName(position));
-                    newTrackAttributes.put("Artist", getArtistName(position));
-                    newTrackAttributes.put("Data", getData(position));
+                    try {
+                        newTrackAttributes.put("Title", threadPool.submit(() -> getSongName(position)).get());
+                        newTrackAttributes.put("Album", threadPool.submit(() -> getAlbumName(position)).get());
+                        newTrackAttributes.put("Artist", threadPool.submit(() -> getArtistName(position)).get());
+                        newTrackAttributes.put("Data", threadPool.submit(() -> getData(position)).get());
+                    } catch (ExecutionException e) {
+                        e.printStackTrace();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
 
                     NowPlayingActivity.setTrackAttributes(newTrackAttributes);
                     NowPlayingActivity.setAlbumCover(getAlbumCover(position));
