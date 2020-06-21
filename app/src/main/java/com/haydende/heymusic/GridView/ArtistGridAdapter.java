@@ -3,6 +3,7 @@ package com.haydende.heymusic.GridView;
 import android.app.Activity;
 import android.database.Cursor;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,7 +13,12 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.haydende.heymusic.R;
+
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * Subclass of <code>RecyclerView</code>.<code>Adapter</code> that adapts the <code>artist</code>
@@ -22,6 +28,8 @@ public class ArtistGridAdapter extends RecyclerView.Adapter<ArtistGridAdapter.Ar
 implements GridAdapter {
 
     private Cursor mediaStoreCursor;
+
+    private ExecutorService threadPool = Executors.newFixedThreadPool(4);
 
     private final Activity activity;
 
@@ -37,12 +45,25 @@ implements GridAdapter {
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ArtistViewHolder holder, int position) {
-        // Bitmap bitmap = getAlbumCover(position);
-        //if (bitmap != null) {
-        // holder.getImageButton().setImageBitmap(bitmap);
-        holder.getTextView().setText(getArtistName(position));
-        //}
+    public void onBindViewHolder(@NonNull ArtistGridAdapter.ArtistViewHolder holder, int position) {
+        String title = null;
+        try {
+            /*
+            Glide.with(activity)
+                    .load(threadPool.submit(() -> // Need to find way to get artist image).get())
+                    .centerCrop()
+                    .override(320,320)
+                    .into(holder.getImageButton());
+             */
+            title = threadPool.submit(() -> getArtistName(position)).get();
+        } catch (ExecutionException e) {
+            // e.printStackTrace();
+        } catch (InterruptedException e) {
+            // e.printStackTrace();
+        } catch (NullPointerException npe) {
+            Log.i("AlbumGridAdapter", "No album art found");
+        }
+        holder.getTextView().setText((title == null) ? "Unknown" : title);
     }
 
     @Override
@@ -115,9 +136,4 @@ implements GridAdapter {
             oldCursor.close();
         }
     }
-
-    public String toString() {
-        return "ArtistGridAdapter";
-    }
-
 }

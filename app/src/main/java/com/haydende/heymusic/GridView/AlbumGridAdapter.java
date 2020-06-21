@@ -53,39 +53,26 @@ implements GridAdapter {
 
     @Override
     public AlbumViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        try {
-            Log.i("AlbumGridAdapter", "Returning on worker thread");
-            return new AlbumViewHolder(threadPool.submit(() -> inflate(parent, viewType)).get());
-        } catch (ExecutionException | InterruptedException e) {
-            // e.printStackTrace();
-        }
-        Log.i("AlbumGridAdapter", "Returning on main thread");
-        return new AlbumViewHolder(inflate(parent, viewType));
-    }
-
-    public View inflate(ViewGroup parent, int viewType) {
-        return LayoutInflater.from(parent.getContext()).inflate(R.layout.grid_item, parent, false);
+        View view = LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.grid_item, parent, false);
+        return new AlbumViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull AlbumViewHolder holder, int position) {
         String title = null;
         try {
-            // bitmap = threadPool.submit(() -> getAlbumCover(position)).get();
             Glide.with(activity)
-                    .load(getAlbumCoverUri(position))
+                    .load(threadPool.submit(() -> getAlbumCover(position)).get())
                     .centerCrop()
                     .override(320,320)
                     .into(holder.getImageButton());
             title = threadPool.submit(() -> getAlbumName(position)).get();
-        } catch (ExecutionException e) {
-            // e.printStackTrace();
-        } catch (InterruptedException e) {
+        } catch (ExecutionException | InterruptedException e) {
             // e.printStackTrace();
         } catch (NullPointerException npe) {
             Log.i("AlbumGridAdapter", "No album art found");
         }
-        // if (bitmap != null) holder.getImageButton().setImageBitmap(bitmap);
         holder.getTextView().setText((title == null) ? "Unknown" : title);
     }
 
@@ -175,66 +162,22 @@ implements GridAdapter {
     }
 
     /**
-     * Method for getting the album cover as a {@link Bitmap} image.
+     * Method for getting the album cover as a {@link Uri}.
      * @param position Position for the mediaStoreCursor to look in
      * @return Album cover to be used for ImageButton image
      */
-    private Uri getAlbumCoverUri(int position) {
+    private Uri getAlbumCover(int position) {
         // try {
             Log.d("AlbumGridAdapter", "Starting method... ");
             mediaStoreCursor.moveToPosition(position);
-            String albumArt = mediaStoreCursor.getString(
+            String albumID = mediaStoreCursor.getString(
                     mediaStoreCursor.getColumnIndex(
-                            "album_art"
+                            MediaStore.Audio.Albums._ID
                     )
             );
-            Log.i("AlbumGridAdapter", String.format("Cover art for album %d: %s", position, albumArt));
-            // Bitmap cover = null;
-            return Uri.fromFile(new File(albumArt));
-            /*if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
-                Log.i("AlbumGridAdapter", "Recognised Android Q");
-                cover = activity.getApplicationContext().getContentResolver().loadThumbnail(
-                        getUri(position),
-                        new Size(200, 200),
-                        null
-                );
-            } else {
-                cover = threadPool.submit(() -> BitmapFactory.decodeFile(albumArt)).get();
-            }
-            Log.i("AlbumGridAdapter", "Returning loaded: " +
-                    ((cover == null) ? "null" : cover.toString()));
-            return cover;
-        } catch (IllegalStateException | IOException e) {
-            // e.printStackTrace();
-            Log.i("AlbumGridAdapter", "Returning null");
-            return null;
-        } catch (InterruptedException | ExecutionException e) {
-            // e.printStackTrace();
-            Log.i("AlbumGridAdapter", "Returning null");
-            return null;
-        }*/
-
+            Uri albumUri = Uri.parse(String.format("content://media/external/audio/albumart/%s", albumID));
+            Log.i("AlbumGridAdapter", String.format("Cover art for album %d: %s", position, albumUri));
+            return albumUri;
     }
 
-    /**
-     * Method for getting the album cover {@link Uri} for the album retrieved from {@code mediaStoreCursor}.
-     * @param position The position in the Cursor table for the album item
-     * @return Album cover Uri for the image corresponding to albumID
-     */
-    private Uri getUri(int position) {
-        mediaStoreCursor.moveToPosition(position);
-        return Uri.parse(
-                MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI +
-                        "/" +
-                mediaStoreCursor.getString(
-                        mediaStoreCursor.getColumnIndex(
-                                MediaStore.Audio.Albums._ID
-                        )
-                )
-        );
-    }
-
-    public String toString() {
-        return "AlbumGridAdapter";
-    }
 }

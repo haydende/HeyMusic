@@ -5,6 +5,7 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.graphics.Bitmap;
+import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
@@ -26,7 +27,7 @@ public class NowPlayingActivity extends AppCompatActivity {
      */
     private static HashMap<String, String> trackAttributes;
 
-    private static Bitmap coverArt;
+    private static Uri coverArt;
 
     private RecyclerView recyclerView;
 
@@ -45,7 +46,7 @@ public class NowPlayingActivity extends AppCompatActivity {
 
         recyclerView = findViewById(R.id.nowPlayingRecyclerView);
         recyclerView.setLayoutManager(new GridLayoutManager(this, 1));
-        recyclerView.setAdapter(new NowPlayingAdapter(trackAttributes, coverArt));
+        recyclerView.setAdapter(new NowPlayingAdapter(this, trackAttributes, coverArt));
 
         shuffle = findViewById(R.id.nowPlayingButtons_shuffle);
         rewind = findViewById(R.id.nowPlayingButtons_rewind);
@@ -109,7 +110,7 @@ public class NowPlayingActivity extends AppCompatActivity {
      * Mutator for the {@link this#coverArt}.
      * @param newCoverArt now value for {@link this#coverArt}
      */
-    public static void setAlbumCover(Bitmap newCoverArt) { coverArt = newCoverArt; }
+    public static void setAlbumCover(Uri newCoverArt) { coverArt = newCoverArt; }
 
     /**
      * Mutator for {@link this#contentUri}.
