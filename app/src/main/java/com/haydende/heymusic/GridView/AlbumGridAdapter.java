@@ -1,15 +1,9 @@
 package com.haydende.heymusic.GridView;
 
-import android.app.Activity;
-import android.content.ContentResolver;
 import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
-import android.os.Build;
 import android.provider.MediaStore;
 import android.util.Log;
-import android.util.Size;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,18 +11,12 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.haydende.heymusic.R;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -167,17 +155,16 @@ implements GridAdapter {
      * @return Album cover to be used for ImageButton image
      */
     private Uri getAlbumCover(int position) {
-        // try {
-            Log.d("AlbumGridAdapter", "Starting method... ");
-            mediaStoreCursor.moveToPosition(position);
-            String albumID = mediaStoreCursor.getString(
-                    mediaStoreCursor.getColumnIndex(
-                            MediaStore.Audio.Albums._ID
-                    )
-            );
-            Uri albumUri = Uri.parse(String.format("content://media/external/audio/albumart/%s", albumID));
-            Log.i("AlbumGridAdapter", String.format("Cover art for album %d: %s", position, albumUri));
-            return albumUri;
+        Log.d("AlbumGridAdapter", "Starting method... ");
+        mediaStoreCursor.moveToPosition(position);
+        String albumID = mediaStoreCursor.getString(
+                mediaStoreCursor.getColumnIndex(
+                        MediaStore.Audio.Albums._ID
+                )
+        );
+        Uri albumUri = Uri.parse(String.format("content://media/external/audio/albumart/%s", albumID));
+        Log.i("AlbumGridAdapter", String.format("Cover art for album %d: %s", position, albumUri));
+        return albumUri;
     }
 
 }
