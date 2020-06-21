@@ -21,9 +21,17 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.haydende.heymusic.R;
 
+import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * Subclass of <code>RecyclerView</code>.<code>Adapter</code> that adapts the <code>Album</code>
@@ -32,7 +40,10 @@ import java.io.IOException;
 public class AlbumGridAdapter extends RecyclerView.Adapter<AlbumGridAdapter.AlbumViewHolder>
 implements GridAdapter {
 
+
     private Cursor mediaStoreCursor;
+
+    private ExecutorService threadPool = Executors.newFixedThreadPool(4);
 
     private final AppCompatActivity activity;
 
@@ -42,18 +53,40 @@ implements GridAdapter {
 
     @Override
     public AlbumViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.grid_item, parent, false);
-        return new AlbumViewHolder(view);
+        try {
+            Log.i("AlbumGridAdapter", "Returning on worker thread");
+            return new AlbumViewHolder(threadPool.submit(() -> inflate(parent, viewType)).get());
+        } catch (ExecutionException | InterruptedException e) {
+            // e.printStackTrace();
+        }
+        Log.i("AlbumGridAdapter", "Returning on main thread");
+        return new AlbumViewHolder(inflate(parent, viewType));
+    }
+
+    public View inflate(ViewGroup parent, int viewType) {
+        return LayoutInflater.from(parent.getContext()).inflate(R.layout.grid_item, parent, false);
     }
 
     @Override
     public void onBindViewHolder(@NonNull AlbumViewHolder holder, int position) {
-        Bitmap bitmap = getAlbumCover(position);
-        if (bitmap != null) {
-            holder.getImageButton().setImageBitmap(bitmap);
+        String title = null;
+        try {
+            // bitmap = threadPool.submit(() -> getAlbumCover(position)).get();
+            Glide.with(activity)
+                    .load(getAlbumCoverUri(position))
+                    .centerCrop()
+                    .override(320,320)
+                    .into(holder.getImageButton());
+            title = threadPool.submit(() -> getAlbumName(position)).get();
+        } catch (ExecutionException e) {
+            // e.printStackTrace();
+        } catch (InterruptedException e) {
+            // e.printStackTrace();
+        } catch (NullPointerException npe) {
+            Log.i("AlbumGridAdapter", "No album art found");
         }
-        holder.getTextView().setText(getAlbumName(position));
+        // if (bitmap != null) holder.getImageButton().setImageBitmap(bitmap);
+        holder.getTextView().setText((title == null) ? "Unknown" : title);
     }
 
     @Override
@@ -146,8 +179,8 @@ implements GridAdapter {
      * @param position Position for the mediaStoreCursor to look in
      * @return Album cover to be used for ImageButton image
      */
-    private Bitmap getAlbumCover(int position) {
-        try {
+    private Uri getAlbumCoverUri(int position) {
+        // try {
             Log.d("AlbumGridAdapter", "Starting method... ");
             mediaStoreCursor.moveToPosition(position);
             String albumArt = mediaStoreCursor.getString(
@@ -156,8 +189,9 @@ implements GridAdapter {
                     )
             );
             Log.i("AlbumGridAdapter", String.format("Cover art for album %d: %s", position, albumArt));
-            Bitmap cover = null;
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
+            // Bitmap cover = null;
+            return Uri.fromFile(new File(albumArt));
+            /*if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
                 Log.i("AlbumGridAdapter", "Recognised Android Q");
                 cover = activity.getApplicationContext().getContentResolver().loadThumbnail(
                         getUri(position),
@@ -165,14 +199,21 @@ implements GridAdapter {
                         null
                 );
             } else {
-                cover = BitmapFactory.decodeFile(albumArt);
+                cover = threadPool.submit(() -> BitmapFactory.decodeFile(albumArt)).get();
             }
-            Log.i("AlbumGridAdapter", "Returning loaded: " + ((cover == null) ? "null" : cover.toString()));
+            Log.i("AlbumGridAdapter", "Returning loaded: " +
+                    ((cover == null) ? "null" : cover.toString()));
             return cover;
-        } catch (IllegalStateException | IOException isE) {
+        } catch (IllegalStateException | IOException e) {
+            // e.printStackTrace();
             Log.i("AlbumGridAdapter", "Returning null");
             return null;
-        }
+        } catch (InterruptedException | ExecutionException e) {
+            // e.printStackTrace();
+            Log.i("AlbumGridAdapter", "Returning null");
+            return null;
+        }*/
+
     }
 
     /**
