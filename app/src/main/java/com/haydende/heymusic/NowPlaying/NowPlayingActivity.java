@@ -31,6 +31,8 @@ public class NowPlayingActivity extends AppCompatActivity {
 
     private RecyclerView recyclerView;
 
+    private NowPlayingAdapter adapter;
+
     private ImageButton shuffle;
     private ImageButton rewind;
     private ImageButton playPauseButton;
@@ -43,10 +45,8 @@ public class NowPlayingActivity extends AppCompatActivity {
         setContentView(R.layout.now_playing_activity);
 
         MediaPlayerManager.loadTrack(this, contentUri);
-
-        recyclerView = findViewById(R.id.nowPlayingRecyclerView);
-        recyclerView.setLayoutManager(new GridLayoutManager(this, 1));
-        recyclerView.setAdapter(new NowPlayingAdapter(this, trackAttributes, coverArt));
+        adapter = new NowPlayingAdapter(this, trackAttributes, coverArt);
+        adapter.fillLayout();
 
         shuffle = findViewById(R.id.nowPlayingButtons_shuffle);
         rewind = findViewById(R.id.nowPlayingButtons_rewind);

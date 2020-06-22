@@ -29,8 +29,11 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 
-public class NowPlayingAdapter extends RecyclerView.Adapter<NowPlayingAdapter.NowPlayingViewHolder> {
+public class NowPlayingAdapter {
 
+    /**
+     * {@link NowPlayingActivity} instance that created this {@link NowPlayingAdapter} instance.
+     */
     private final Activity activity;
 
     /**
@@ -54,39 +57,43 @@ public class NowPlayingAdapter extends RecyclerView.Adapter<NowPlayingAdapter.No
         this.coverArt = coverArt;
     }
 
-    @NonNull
-    @Override
-    public NowPlayingViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.now_playing_item, parent, false);
-        return new NowPlayingAdapter.NowPlayingViewHolder(view);
-    }
+    /**
+     * Method for adding the data for the current track to the widgets in the NowPlaying layout.
+     */
+    public void fillLayout() {
+        ImageButton albumCover = activity.findViewById(R.id.nowPlayingData_coverImage);
+        TextView trackName = activity.findViewById(R.id.nowPlayingData_trackName);
+        TextView albumName = activity.findViewById(R.id.nowPlayingData_albumName);
+        TextView artistName = activity.findViewById(R.id.nowPlayingData_artistName);
 
-    @Override
-    public void onBindViewHolder(@NonNull NowPlayingViewHolder holder, int position) {
+        TextView fileFormat = activity.findViewById(R.id.nowPlayingData_format);
+        TextView bitRate = activity.findViewById(R.id.nowPlayingData_bitRate);
+        TextView bitDepth = activity.findViewById(R.id.nowPlayingData_bitDepth);
+        TextView sampleRate = activity.findViewById(R.id.nowPlayingData_sampleRate);
+
         Glide.with(activity)
                 .load(coverArt)
                 .override(600,600)
-                .into(holder.albumCover);
-        holder.trackName.setText(attributes.get("Title"));
-        holder.albumName.setText(attributes.get("Album"));
-        holder.artistName.setText(attributes.get("Artist"));
+                .into(albumCover);
+        trackName.setText(attributes.get("Title"));
+        albumName.setText(attributes.get("Album"));
+        artistName.setText(attributes.get("Artist"));
 
         // get the metadata using the AudioFileIO API
-        String format = "format";
-        int bitDepth = 16;
-        String bitRate = "BitRate";
-        String sampleRate = "Sample Rate";
+        String formatString = "format";
+        int bitDepthInt = 16;
+        String bitRateString = "BitRate";
+        String sampleRateString = "Sample Rate";
 
         try {
             File track = new File(attributes.get("Data"));
             AudioFile audioFile = AudioFileIO.read(track);
             AudioHeader header = audioFile.getAudioHeader();
 
-            format = header.getFormat();
-            bitDepth = header.getBitsPerSample();
-            bitRate = header.getBitRate();
-            sampleRate = header.getSampleRate();
+            formatString = header.getFormat();
+            bitDepthInt = header.getBitsPerSample();
+            bitRateString = header.getBitRate();
+            sampleRateString = header.getSampleRate();
 
             Log.d("Bitrate" , header.getBitRate());
             Log.d("Sample Rate", header.getSampleRate());
@@ -105,90 +112,9 @@ public class NowPlayingAdapter extends RecyclerView.Adapter<NowPlayingAdapter.No
         } catch (NullPointerException npE) {
 
         }
-        holder.fileFormat.setText(format);
-        holder.bitRate.setText(bitRate + "kb/s");
-        holder.bitDepth.setText(bitDepth + " bits");
-        holder.sampleRate.setText(sampleRate + "KHz");
-    }
-
-    @Override
-    public int getItemCount() {
-        return attributes == null ? 0 : 1;
-    }
-
-    public static class NowPlayingViewHolder extends RecyclerView.ViewHolder {
-
-        /**
-         * Instance member to represent {@code nowPlayingItem.coverImage} in
-         * {@code now_playing_item.xml}.
-         */
-        public final ImageButton albumCover;
-
-        /**
-         * Instance member to represent {@code nowPlayingItem.seekBar} in
-         * {@code now_playing_item.xml}.
-         */
-        public final SeekBar seekBar;
-
-        /**
-         * Instance member to represent {@code nowPlayingItem.trackName} in
-         * {@code now_playing_item.xml}.
-         */
-        public final TextView trackName;
-
-        /**
-         * Instance member to represent {@code nowPlayingItem.albumName} in
-         * {@code now_playing_item.xml}.
-         */
-        public final TextView albumName;
-
-        /**
-         * Instance member to represent {@code nowPlayingItem.artistName} in
-         * {@code now_playing_item.xml}.
-         */
-        public final TextView artistName;
-
-        /**
-         * Instance member to represent {@code nowPlayingItem.fileFormat} in
-         * {@code now_playing_item.xml}.
-         */
-        public final TextView fileFormat;
-
-        /**
-         * Instance member to represent {@code nowPlayingItem.bitRate} in
-         * {@code now_playing_item.xml}.
-         */
-        public final TextView bitRate;
-
-        /**
-         * Instance member to represent {@code nowPlayingItem.bitDepth} in
-         * {@code now_playing_item.xml}.
-         */
-        public final TextView bitDepth;
-
-        /**
-         * Instance member to represent {@code nowPlayingItem.sampleRate} in
-         * {@code now_playing_item.xml}.
-         */
-        public final TextView sampleRate;
-
-        /**
-         * Default constructor for this class.
-         * @param itemView View created from an xml layout in
-         *                 {@link NowPlayingAdapter#onBindViewHolder(NowPlayingViewHolder, int)}.
-         *                 In this case the layout is now_playing_item.xml
-         */
-        public NowPlayingViewHolder(@NonNull View itemView) {
-            super(itemView);
-            albumCover = itemView.findViewById(R.id.nowPlayingItem_coverImage);
-            seekBar = itemView.findViewById(R.id.nowPlayingItem_seekBar);
-            trackName = itemView.findViewById(R.id.nowPlayingItem_trackName);
-            albumName = itemView.findViewById(R.id.nowPlayingItem_albumName);
-            artistName = itemView.findViewById(R.id.nowPlayingItem_artistName);
-            fileFormat = itemView.findViewById(R.id.nowPlayingItem_format);
-            bitRate = itemView.findViewById(R.id.nowPlayingItem_bitRate);
-            bitDepth = itemView.findViewById(R.id.nowPlayingItem_bitDepth);
-            sampleRate = itemView.findViewById(R.id.nowPlayingItem_sampleRate);
-        }
+        fileFormat.setText(formatString);
+        bitRate.setText(bitRateString + "kb/s");
+        bitDepth.setText(bitDepthInt + " bits");
+        sampleRate.setText(sampleRateString + "KHz");
     }
 }
