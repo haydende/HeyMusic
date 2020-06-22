@@ -1,39 +1,21 @@
-package com.haydende.heymusic;
+package com.haydende.heymusic.NowPlaying;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.content.Intent;
-import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.drawable.Drawable;
-import android.media.AudioManager;
-import android.media.MediaFormat;
-import android.media.MediaMetadata;
-import android.media.MediaMetadataRetriever;
-import android.media.MediaPlayer;
-import android.media.MediaPlayer.TrackInfo;
+import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.URI;
-import java.util.HashMap;
+import com.haydende.heymusic.MediaPlayerManager.MediaPlayerManager;
+import com.haydende.heymusic.GridView.SongGridAdapter;
+import com.haydende.heymusic.R;
 
-import org.jaudiotagger.audio.AudioFile;
-import org.jaudiotagger.audio.AudioFileIO;
-import org.jaudiotagger.audio.AudioHeader;
-import org.jaudiotagger.audio.exceptions.CannotReadException;
-import org.jaudiotagger.audio.exceptions.InvalidAudioFrameException;
-import org.jaudiotagger.audio.exceptions.ReadOnlyFileException;
-import org.jaudiotagger.tag.TagException;
+import java.util.HashMap;
 
 public class NowPlayingActivity extends AppCompatActivity {
 
@@ -45,11 +27,8 @@ public class NowPlayingActivity extends AppCompatActivity {
      */
     private static HashMap<String, String> trackAttributes;
 
-    private static Bitmap coverArt;
+    private static Uri coverArt;
 
-    private static MediaPlayer player;
-    private static TrackInfo trackInfo[];
-    private static MediaMetadataRetriever metadataRetriever = new MediaMetadataRetriever();
     private RecyclerView recyclerView;
 
     private ImageButton shuffle;
@@ -61,17 +40,13 @@ public class NowPlayingActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_now_playing);
+        setContentView(R.layout.now_playing_activity);
 
-        new Thread(() -> {
-            player = MediaPlayer.create(this, contentUri);
-            trackInfo = player.getTrackInfo();
-            Log.d("player.getTrackInfo()", trackInfo[0].toString());
-        }).start();
+        MediaPlayerManager.loadTrack(this, contentUri);
 
         recyclerView = findViewById(R.id.nowPlayingRecyclerView);
         recyclerView.setLayoutManager(new GridLayoutManager(this, 1));
-        recyclerView.setAdapter(new NowPlayingAdapter(trackAttributes, coverArt));
+        recyclerView.setAdapter(new NowPlayingAdapter(this, trackAttributes, coverArt));
 
         shuffle = findViewById(R.id.nowPlayingButtons_shuffle);
         rewind = findViewById(R.id.nowPlayingButtons_rewind);
@@ -79,41 +54,47 @@ public class NowPlayingActivity extends AppCompatActivity {
         forward = findViewById(R.id.nowPlayingButtons_forward);
         repeat = findViewById(R.id.nowPlayingButtons_repeat);
 
+        MediaPlayerManager.togglePlayback();
+        togglePlayButton();
+
+        /* Set the onClickListeners for the playback control buttons */
+
         shuffle.setOnClickListener((View v) -> {
             // TODO
         });
 
         rewind.setOnClickListener((View v) -> {
-            player.seekTo(0);
+            MediaPlayerManager.skipToBeginning();
         });
 
         playPauseButton.setOnClickListener((View v) -> {
-            if (player.isPlaying()) {
-                player.pause();
-                playPauseButton.setForeground(
-                        getResources().getDrawable(
-                                R.drawable.ic_play_arrow_black_24dp,
-                                null
-                        )
-                );
-            } else {
-                player.start();
-                playPauseButton.setForeground(
-                        getResources().getDrawable(
-                                R.drawable.ic_pause_black_24dp,
-                                null
-                        )
-                );
-            }
+            MediaPlayerManager.togglePlayback();
+            togglePlayButton();
         });
 
         forward.setOnClickListener((View v) -> {
-            player.seekTo(player.getDuration());
+            MediaPlayerManager.skipToEnd();
         });
 
         repeat.setOnClickListener((View v) -> {
-            player.setLooping(player.isLooping() ? false : true);
+            MediaPlayerManager.toggleLooping();
         });
+    }
+
+    private void togglePlayButton() {
+        if (MediaPlayerManager.isPlaying()) {
+            playPauseButton.setForeground(
+                    getResources().getDrawable(
+                            R.drawable.ic_pause_black_24dp
+                    )
+            );
+        } else {
+            playPauseButton.setForeground(
+                    getResources().getDrawable(
+                            R.drawable.ic_play_arrow_black_24dp
+                    )
+            );
+        }
     }
 
     /**
@@ -129,7 +110,7 @@ public class NowPlayingActivity extends AppCompatActivity {
      * Mutator for the {@link this#coverArt}.
      * @param newCoverArt now value for {@link this#coverArt}
      */
-    public static void setAlbumCover(Bitmap newCoverArt) { coverArt = newCoverArt; }
+    public static void setAlbumCover(Uri newCoverArt) { coverArt = newCoverArt; }
 
     /**
      * Mutator for {@link this#contentUri}.

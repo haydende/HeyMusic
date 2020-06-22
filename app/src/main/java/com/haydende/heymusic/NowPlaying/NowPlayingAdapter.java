@@ -1,7 +1,8 @@
-package com.haydende.heymusic;
+package com.haydende.heymusic.NowPlaying;
 
 import android.app.Activity;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +13,9 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.bumptech.glide.Glide;
+import com.haydende.heymusic.R;
 
 import org.jaudiotagger.audio.AudioFile;
 import org.jaudiotagger.audio.AudioFileIO;
@@ -27,6 +31,8 @@ import java.util.HashMap;
 
 public class NowPlayingAdapter extends RecyclerView.Adapter<NowPlayingAdapter.NowPlayingViewHolder> {
 
+    private final Activity activity;
+
     /**
      * HashMap containing the String attributes to be displayed in the now_playing_item.xml layout.
      */
@@ -35,14 +41,15 @@ public class NowPlayingAdapter extends RecyclerView.Adapter<NowPlayingAdapter.No
     /**
      * Bitmap image for the ImageButton in the now_playing_item.xml layout.
      */
-    private final Bitmap coverArt;
+    private final Uri coverArt;
 
     /**
      * Default constructor for this class.
      * @param attributes HashMap value for the attributes member
      * @param coverArt Bitmap value for the coverArt member
      */
-    public NowPlayingAdapter(HashMap attributes, Bitmap coverArt) {
+    public NowPlayingAdapter(Activity activity, HashMap<String, String> attributes, Uri coverArt) {
+        this.activity = activity;
         this.attributes = attributes;
         this.coverArt = coverArt;
     }
@@ -57,7 +64,10 @@ public class NowPlayingAdapter extends RecyclerView.Adapter<NowPlayingAdapter.No
 
     @Override
     public void onBindViewHolder(@NonNull NowPlayingViewHolder holder, int position) {
-        holder.albumCover.setImageBitmap(coverArt);
+        Glide.with(activity)
+                .load(coverArt)
+                .override(600,600)
+                .into(holder.albumCover);
         holder.trackName.setText(attributes.get("Title"));
         holder.albumName.setText(attributes.get("Album"));
         holder.artistName.setText(attributes.get("Artist"));
@@ -91,6 +101,8 @@ public class NowPlayingAdapter extends RecyclerView.Adapter<NowPlayingAdapter.No
         } catch (ReadOnlyFileException rofE) {
 
         } catch (InvalidAudioFrameException iafE) {
+
+        } catch (NullPointerException npE) {
 
         }
         holder.fileFormat.setText(format);

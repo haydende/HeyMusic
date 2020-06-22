@@ -2,30 +2,33 @@
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/albumItem"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:layout_marginEnd="8dp"
-    android:layout_marginStart="8dp"
-    android:layout_marginTop="8dp">
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:maxHeight="160dp"
+    android:maxWidth="105dp"
+    android:layout_marginStart="2dp"
+    android:layout_marginTop="2dp">
 
-    <RelativeLayout
+    <LinearLayout
         android:id="@+id/albumLayout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:padding="1dp">
-
+        android:layout_marginStart="10dp"
+        android:orientation="vertical">
         <ImageButton
             android:id="@+id/albumLayout.imageButton"
-            android:minHeight="85dp"
-            android:minWidth="85dp"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
-        </ImageButton>
+            android:layout_height="wrap_content"
+            android:scaleType="fitCenter"
+            android:adjustViewBounds="true"
+            android:backgroundTint="#FFFFFF"/>
         <TextView
             android:id="@+id/albumLayout.text"
             android:text="Placeholder"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
-        </TextView>
-    </RelativeLayout>
+            android:layout_height="wrap_content"
+            android:maxWidth="85dp"
+            android:maxLength="50"
+            android:layout_marginTop="8dp"/>
+    </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

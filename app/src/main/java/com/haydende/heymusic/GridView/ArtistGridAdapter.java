@@ -1,11 +1,9 @@
-package com.haydende.heymusic;
+package com.haydende.heymusic.GridView;
 
 import android.app.Activity;
-import android.content.Context;
 import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.net.Uri;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,16 +13,23 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.io.IOException;
-import java.util.List;
+import com.bumptech.glide.Glide;
+import com.haydende.heymusic.R;
+
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * Subclass of <code>RecyclerView</code>.<code>Adapter</code> that adapts the <code>artist</code>
  * data for use in UI components.
  */
-public class ArtistGridAdapter extends RecyclerView.Adapter<ArtistGridAdapter.ArtistViewHolder> {
+public class ArtistGridAdapter extends RecyclerView.Adapter<ArtistGridAdapter.ArtistViewHolder>
+implements GridAdapter {
 
     private Cursor mediaStoreCursor;
+
+    private ExecutorService threadPool = Executors.newFixedThreadPool(4);
 
     private final Activity activity;
 
@@ -35,17 +40,30 @@ public class ArtistGridAdapter extends RecyclerView.Adapter<ArtistGridAdapter.Ar
     @Override
     public ArtistViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.artist_item, parent, false);
+                .inflate(R.layout.grid_item, parent, false);
         return new ArtistViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ArtistViewHolder holder, int position) {
-        // Bitmap bitmap = getAlbumCover(position);
-        //if (bitmap != null) {
-        // holder.getImageButton().setImageBitmap(bitmap);
-        holder.getTextView().setText(getArtistName(position));
-        //}
+    public void onBindViewHolder(@NonNull ArtistGridAdapter.ArtistViewHolder holder, int position) {
+        String title = null;
+        try {
+            /*
+            Glide.with(activity)
+                    .load(threadPool.submit(() -> // Need to find way to get artist image).get())
+                    .centerCrop()
+                    .override(320,320)
+                    .into(holder.getImageButton());
+             */
+            title = threadPool.submit(() -> getArtistName(position)).get();
+        } catch (ExecutionException e) {
+            // e.printStackTrace();
+        } catch (InterruptedException e) {
+            // e.printStackTrace();
+        } catch (NullPointerException npe) {
+            Log.i("AlbumGridAdapter", "No album art found");
+        }
+        holder.getTextView().setText((title == null) ? "Unknown" : title);
     }
 
     @Override
@@ -74,8 +92,8 @@ public class ArtistGridAdapter extends RecyclerView.Adapter<ArtistGridAdapter.Ar
          */
         public ArtistViewHolder(View itemView) {
             super(itemView);
-            imageButton = itemView.findViewById(R.id.artistLayout_imageButton);
-            textView = itemView.findViewById(R.id.artistLayout_textView);
+            imageButton = itemView.findViewById(R.id.gridItem_imageButton);
+            textView = itemView.findViewById(R.id.gridItem_textView);
         }
 
         /**
@@ -118,6 +136,4 @@ public class ArtistGridAdapter extends RecyclerView.Adapter<ArtistGridAdapter.Ar
             oldCursor.close();
         }
     }
-
-
 }

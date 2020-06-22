@@ -1,12 +1,10 @@
-package com.haydende.heymusic;
+package com.haydende.heymusic.GridView;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
-import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -18,21 +16,37 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+import com.haydende.heymusic.NowPlaying.NowPlayingActivity;
+import com.haydende.heymusic.R;
+
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * Subclass of <code>RecyclerView</code>.<code>Adapter</code> that adapts the <code>Song</code>
  * data for use in UI components.
  */
-public class SongGridAdapter extends RecyclerView.Adapter<SongGridAdapter.SongViewHolder> {
+public class SongGridAdapter extends RecyclerView.Adapter<SongGridAdapter.SongViewHolder>
+implements GridAdapter {
 
+    /**
+        Cursor instance used for accessing the results of a MediaStore query.
+     */
     private Cursor mediaStoreCursor;
 
+    /**
+     * Instance of Activity that this class has been created in.
+     */
     private final Activity activity;
 
+    /**
+     * Default constructor for this class.
+     * @param activity Activity instance this class was created in
+     */
     public SongGridAdapter(Activity activity) {
         this.activity = activity;
     }
@@ -40,21 +54,16 @@ public class SongGridAdapter extends RecyclerView.Adapter<SongGridAdapter.SongVi
     @Override
     public SongGridAdapter.SongViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.song_item, parent, false);
+                .inflate(R.layout.grid_item, parent, false);
         return new SongGridAdapter.SongViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull SongGridAdapter.SongViewHolder holder, int position) {
-        Bitmap bitmap = getAlbumCover(position);
-        if (bitmap != null) {
-            holder.getImageButton().setImageBitmap(bitmap);
-        }
-        holder.getImageButton().setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent nowPlaying = new Intent(activity, NowPlayingActivity.class);
+        holder.getImageButton().setOnClickListener(v -> {
+            Intent nowPlaying = new Intent(activity, NowPlayingActivity.class);
 
+            new Thread(() -> {
                 HashMap<String, String> newTrackAttributes = new HashMap<>();
                 newTrackAttributes.put("Title", getSongName(position));
                 newTrackAttributes.put("Album", getAlbumName(position));
@@ -64,12 +73,19 @@ public class SongGridAdapter extends RecyclerView.Adapter<SongGridAdapter.SongVi
                 NowPlayingActivity.setTrackAttributes(newTrackAttributes);
                 NowPlayingActivity.setAlbumCover(getAlbumCover(position));
                 NowPlayingActivity.setContentUri(getUri(position));
+            }).start();
 
-                // start the activity
-                activity.startActivity(nowPlaying);
-            }
+            // start the activity
+            activity.startActivity(nowPlaying);
         });
+        Glide.with(activity)
+                .load(getAlbumCover(position))
+                .centerCrop()
+                .override(320,320)
+                .into(holder.getImageButton());
+        Log.i("SongGridAdapter", "Album cover has been applied");
         holder.getTextView().setText(getSongName(position));
+
     }
 
     @Override
@@ -98,8 +114,8 @@ public class SongGridAdapter extends RecyclerView.Adapter<SongGridAdapter.SongVi
          */
         public SongViewHolder(View itemView) {
             super(itemView);
-            imageButton = itemView.findViewById(R.id.songLayout_imageButton);
-            textView = itemView.findViewById(R.id.songLayout_text);
+            imageButton = itemView.findViewById(R.id.gridItem_imageButton);
+            textView = itemView.findViewById(R.id.gridItem_textView);
         }
 
         /**
@@ -171,35 +187,17 @@ public class SongGridAdapter extends RecyclerView.Adapter<SongGridAdapter.SongVi
      * @param position Position for the mediaStoreCursor to look in
      * @return Album cover to be used for ImageButton image
      */
-    private Bitmap getAlbumCover(int position) {
-        try {
-            Log.d("getAlbumCover", "Starting method... ");
-            mediaStoreCursor.moveToPosition(position);
-            Bitmap cover = MediaStore.Images.Media.getBitmap(
-                    activity.getContentResolver(),
-                    getAlbumUri(
-                            mediaStoreCursor.getString(
-                                    mediaStoreCursor.getColumnIndex(
-                                            MediaStore.Audio.Media.ALBUM_ID
-                                    )))
-            );
-            Log.d("getAlbumCover", "Returning bitmap");
-            return cover;
-        } catch (IOException ioE) {
-            Log.d("getAlbumCover", "Returning null");
-            return null;
-        }
-    }
-
-    /**
-     * Method for getting the album cover {@link Uri} for the album retrieved from {@code mediaStoreCursor}.
-     * @param albumID Album ID value taken from mediaStoreCursor
-     * @return Album cover Uri for the image corresponding to albumID
-     */
-    private Uri getAlbumUri(String albumID) {
-        Uri artworkUri = Uri.parse("content://media/external/audio/albumart");
-        Uri imageUri = Uri.withAppendedPath(artworkUri, String.valueOf(albumID));
-        return imageUri;
+    private Uri getAlbumCover(int position) {
+        Log.d("getAlbumCover", "Starting method... ");
+        mediaStoreCursor.moveToPosition(position);
+        String albumID = mediaStoreCursor.getString(
+                mediaStoreCursor.getColumnIndex(
+                        MediaStore.Audio.Media.ALBUM_ID
+                )
+        );
+        Uri artworkUri = Uri.parse("content://media/external/audio/albumart" + "/" + albumID);
+        Log.i("SongGridAdapter", String.format("Returning %s", artworkUri.toString()));
+        return artworkUri;
     }
 
     /**
@@ -242,6 +240,16 @@ public class SongGridAdapter extends RecyclerView.Adapter<SongGridAdapter.SongVi
         );
     }
 
+    /**
+     * Internal method for swapping the Cursor object in use.
+     * <p>
+     *     Checks if the new Cursor is the same as the old one so that
+     *     {@link this#changeCursor(Cursor)} can decide whether to close it or not.
+     * </p>
+     *
+     * @param cursor New Cursor object to swap to
+     * @return The old Cursor if the new one is in fact new; null if they're the same
+     */
     private Cursor swapCursor(Cursor cursor) {
         if (mediaStoreCursor == cursor) {
             return null;
@@ -254,6 +262,12 @@ public class SongGridAdapter extends RecyclerView.Adapter<SongGridAdapter.SongVi
         return oldCursor;
     }
 
+    /**
+     * Method for setting the new Cursor to use. Calls {@link this#swapCursor(Cursor)} to determine
+     * whether whether the new cursor is actually new.
+     *
+     * @param cursor New Cursor that has been provided
+     */
     public void changeCursor(Cursor cursor) {
         Cursor oldCursor = swapCursor(cursor);
         if (oldCursor != null) {

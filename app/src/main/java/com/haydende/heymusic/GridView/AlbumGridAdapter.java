@@ -1,15 +1,9 @@
-package com.haydende.heymusic;
+package com.haydende.heymusic.GridView;
 
-import android.app.Activity;
-import android.content.Context;
 import android.database.Cursor;
-import android.graphics.Bitmap;
 import android.net.Uri;
-import android.os.Build;
 import android.provider.MediaStore;
-import android.text.Layout;
 import android.util.Log;
-import android.util.Size;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,43 +11,57 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
-import org.w3c.dom.Text;
+import com.bumptech.glide.Glide;
+import com.haydende.heymusic.R;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * Subclass of <code>RecyclerView</code>.<code>Adapter</code> that adapts the <code>Album</code>
  * data for use in UI components.
  */
-public class AlbumGridAdapter extends RecyclerView.Adapter<AlbumGridAdapter.AlbumViewHolder> {
+public class AlbumGridAdapter extends RecyclerView.Adapter<AlbumGridAdapter.AlbumViewHolder>
+implements GridAdapter {
+
 
     private Cursor mediaStoreCursor;
 
-    private final Activity activity;
+    private ExecutorService threadPool = Executors.newFixedThreadPool(4);
 
-    public AlbumGridAdapter(Activity activity) {
+    private final AppCompatActivity activity;
+
+    public AlbumGridAdapter(AppCompatActivity activity) {
         this.activity = activity;
     }
 
     @Override
     public AlbumViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.album_item, parent, false);
+                .inflate(R.layout.grid_item, parent, false);
         return new AlbumViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull AlbumViewHolder holder, int position) {
-        Bitmap bitmap = getAlbumCover(position);
-        if (bitmap != null) {
-            holder.getImageButton().setImageBitmap(bitmap);
+        String title = null;
+        try {
+            Glide.with(activity)
+                    .load(threadPool.submit(() -> getAlbumCover(position)).get())
+                    .centerCrop()
+                    .override(320,320)
+                    .into(holder.getImageButton());
+            title = threadPool.submit(() -> getAlbumName(position)).get();
+        } catch (ExecutionException | InterruptedException e) {
+            // e.printStackTrace();
+        } catch (NullPointerException npe) {
+            Log.i("AlbumGridAdapter", "No album art found");
         }
-        holder.getTextView().setText(getAlbumName(position));
+        holder.getTextView().setText((title == null) ? "Unknown" : title);
     }
 
     @Override
@@ -82,8 +90,8 @@ public class AlbumGridAdapter extends RecyclerView.Adapter<AlbumGridAdapter.Albu
          */
         public AlbumViewHolder(View itemView) {
             super(itemView);
-            imageButton = itemView.findViewById(R.id.albumLayout_imageButton);
-            textView = itemView.findViewById(R.id.albumLayout_text);
+            imageButton = itemView.findViewById(R.id.gridItem_imageButton);
+            textView = itemView.findViewById(R.id.gridItem_textView);
         }
 
         /**
@@ -142,40 +150,21 @@ public class AlbumGridAdapter extends RecyclerView.Adapter<AlbumGridAdapter.Albu
     }
 
     /**
-     * Method for getting the album cover as a {@link Bitmap} image.
+     * Method for getting the album cover as a {@link Uri}.
      * @param position Position for the mediaStoreCursor to look in
      * @return Album cover to be used for ImageButton image
      */
-    private Bitmap getAlbumCover(int position) {
-        int idIndex = mediaStoreCursor.getColumnIndex(MediaStore.Files.FileColumns._ID);
-        int mediaTypeIndex = mediaStoreCursor.getColumnIndex(MediaStore.Files.FileColumns.MEDIA_TYPE);
-        try {
-            Log.d("getAlbumCover", "Starting method... ");
-            mediaStoreCursor.moveToPosition(position);
-            Bitmap cover = MediaStore.Images.Media.getBitmap(
-                    activity.getContentResolver(),
-                    getAlbumUri(
-                            mediaStoreCursor.getString(
-                                    mediaStoreCursor.getColumnIndex(
-                                        MediaStore.Audio.Albums._ID
-                            )))
-            );
-            Log.d("getAlbumCover", "Returning bitmap");
-            return cover;
-        } catch (IOException ioE) {
-            Log.d("getAlbumCover", "Returning null");
-            return null;
-        }
+    private Uri getAlbumCover(int position) {
+        Log.d("AlbumGridAdapter", "Starting method... ");
+        mediaStoreCursor.moveToPosition(position);
+        String albumID = mediaStoreCursor.getString(
+                mediaStoreCursor.getColumnIndex(
+                        MediaStore.Audio.Albums._ID
+                )
+        );
+        Uri albumUri = Uri.parse(String.format("content://media/external/audio/albumart/%s", albumID));
+        Log.i("AlbumGridAdapter", String.format("Cover art for album %d: %s", position, albumUri));
+        return albumUri;
     }
 
-    /**
-     * Method for getting the album cover {@link Uri} for the album retrieved from {@code mediaStoreCursor}.
-     * @param albumID Album ID value taken from mediaStoreCursor
-     * @return Album cover Uri for the image corresponding to albumID
-     */
-    private Uri getAlbumUri(String albumID) {
-        Uri artworkUri = Uri.parse("content://media/external/audio/albumart");
-        Uri imageUri = Uri.withAppendedPath(artworkUri, String.valueOf(albumID));
-        return imageUri;
-    }
 }
