@@ -1,21 +1,21 @@
 package com.haydende.heymusic.NowPlaying;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
-import android.graphics.Bitmap;
-import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.SeekBar;
 
 import com.haydende.heymusic.MediaPlayerManager.MediaPlayerManager;
 import com.haydende.heymusic.GridView.SongGridAdapter;
 import com.haydende.heymusic.R;
 
 import java.util.HashMap;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class NowPlayingActivity extends AppCompatActivity {
 
@@ -29,10 +29,12 @@ public class NowPlayingActivity extends AppCompatActivity {
 
     private static Uri coverArt;
 
-    private RecyclerView recyclerView;
+    private ScheduledExecutorService mExecutor;
+    private Runnable mRunnable;
 
     private NowPlayingAdapter adapter;
 
+    private SeekBar seekBar;
     private ImageButton shuffle;
     private ImageButton rewind;
     private ImageButton playPauseButton;
@@ -44,20 +46,57 @@ public class NowPlayingActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.now_playing_activity);
 
-        MediaPlayerManager.loadTrack(this, contentUri);
-        adapter = new NowPlayingAdapter(this, trackAttributes, coverArt);
-        adapter.fillLayout();
-
+        seekBar = findViewById(R.id.nowPlayingData_seekBar);
         shuffle = findViewById(R.id.nowPlayingButtons_shuffle);
         rewind = findViewById(R.id.nowPlayingButtons_rewind);
         playPauseButton = findViewById(R.id.nowPlayingButtons_playPause);
         forward = findViewById(R.id.nowPlayingButtons_forward);
         repeat = findViewById(R.id.nowPlayingButtons_repeat);
 
+        mExecutor = Executors.newSingleThreadScheduledExecutor();
+        adapter = new NowPlayingAdapter(this, trackAttributes, coverArt);
+        mRunnable = new Runnable() {
+            @Override
+            public void run() {
+                seekBar.setProgress(MediaPlayerManager.getPosition());
+            }
+        };
+
+        MediaPlayerManager.loadTrack(this, contentUri);
+        adapter.fillLayout();
+
+        mExecutor.scheduleAtFixedRate(
+                mRunnable,
+                0,
+                50,
+                TimeUnit.MILLISECONDS
+        );
+
         MediaPlayerManager.togglePlayback();
         togglePlayButton();
 
         /* Set the onClickListeners for the playback control buttons */
+        seekBar.setMax(MediaPlayerManager.getDuration() - 1);
+        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                if (fromUser) {
+                    MediaPlayerManager.seekTo(progress);
+                } else {
+                    // Increment timer?
+                }
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
 
         shuffle.setOnClickListener((View v) -> {
             // TODO
