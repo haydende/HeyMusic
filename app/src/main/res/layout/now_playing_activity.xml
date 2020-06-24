@@ -29,6 +29,7 @@
             android:padding="10dp" />
 
         <TextView
+            android:id="@+id/nowPlayingData.currentTime"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="00:00:00"
@@ -50,6 +51,7 @@
             android:padding="0dp"/>
 
         <TextView
+            android:id="@+id/nowPlayingData.duration"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="00:00:00"

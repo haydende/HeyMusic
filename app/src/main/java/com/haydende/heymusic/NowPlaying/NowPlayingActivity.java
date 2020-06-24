@@ -4,9 +4,11 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.SeekBar;
+import android.widget.TextView;
 
 import com.haydende.heymusic.MediaPlayerManager.MediaPlayerManager;
 import com.haydende.heymusic.GridView.SongGridAdapter;
@@ -35,6 +37,8 @@ public class NowPlayingActivity extends AppCompatActivity {
     private NowPlayingAdapter adapter;
 
     private SeekBar seekBar;
+    private TextView position;
+    private TextView duration;
     private ImageButton shuffle;
     private ImageButton rewind;
     private ImageButton playPauseButton;
@@ -47,11 +51,14 @@ public class NowPlayingActivity extends AppCompatActivity {
         setContentView(R.layout.now_playing_activity);
 
         seekBar = findViewById(R.id.nowPlayingData_seekBar);
+        position = findViewById(R.id.nowPlayingData_currentTime);
+        duration = findViewById(R.id.nowPlayingData_duration);
         shuffle = findViewById(R.id.nowPlayingButtons_shuffle);
         rewind = findViewById(R.id.nowPlayingButtons_rewind);
         playPauseButton = findViewById(R.id.nowPlayingButtons_playPause);
         forward = findViewById(R.id.nowPlayingButtons_forward);
         repeat = findViewById(R.id.nowPlayingButtons_repeat);
+
 
         mExecutor = Executors.newSingleThreadScheduledExecutor();
         adapter = new NowPlayingAdapter(this, trackAttributes, coverArt);
@@ -59,6 +66,11 @@ public class NowPlayingActivity extends AppCompatActivity {
             @Override
             public void run() {
                 seekBar.setProgress(MediaPlayerManager.getPosition());
+                /*long milli = MediaPlayerManager.getPosition();
+                int minutes = (int)((milli / 1000) / 60);
+                int seconds = (int)((milli / 1000) % 60);
+                Log.i("NowPlayingAdapter", "Duration: " + minutes + ":" + seconds);
+                position.setText(minutes + ":" + seconds);*/
             }
         };
 
@@ -73,6 +85,11 @@ public class NowPlayingActivity extends AppCompatActivity {
         );
 
         MediaPlayerManager.togglePlayback();
+
+        int milli = MediaPlayerManager.getDuration();
+        int minutes = (int)((milli / 1000) / 60);
+        int seconds = (int)((milli / 1000) % 60);
+        duration.setText(String.format("%1$02d:%2$02d", minutes, seconds));
         togglePlayButton();
 
         /* Set the onClickListeners for the playback control buttons */
@@ -82,9 +99,13 @@ public class NowPlayingActivity extends AppCompatActivity {
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 if (fromUser) {
                     MediaPlayerManager.seekTo(progress);
+                    Log.i("NowPlayingActivity", "User set SeekBar progress");
                 } else {
-                    // Increment timer?
+                    // Log.i("NowPlayingActivity", "Progress changed");
                 }
+                int minutes = ((progress / 1000) / 60);
+                int seconds = ((progress / 1000) % 60);
+                position.setText(String.format("%1$02d:%2$02d", minutes, seconds));
             }
 
             @Override
