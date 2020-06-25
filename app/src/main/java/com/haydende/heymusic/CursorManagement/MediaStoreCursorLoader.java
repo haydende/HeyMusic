@@ -13,88 +13,31 @@ import androidx.loader.app.LoaderManager;
 import androidx.loader.content.CursorLoader;
 import androidx.loader.content.Loader;
 
-public class MediaStoreCursorLoader extends Fragment
-        implements LoaderManager.LoaderCallbacks<Cursor> {
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
-    private final static int MEDIASTORE_LOADER_ID = 0;
+public class MediaStoreCursorLoader {
 
-    private static MediaStoreCursorLoader instance = new MediaStoreCursorLoader();
+    private static ExecutorService threadPool = Executors.newFixedThreadPool(4);
 
-    private static Loader<Cursor> loader;
+    public static Cursor getCursor(AppCompatActivity activity, @NonNull Uri contentUri,
+                                   @Nullable String[] projection, @Nullable String selection,
+                                   @Nullable String[] selectionArgs, @Nullable String sortOrder) {
+        Cursor data = null;
+        try {
+            data = threadPool.submit(() -> activity.getContentResolver().query(
+                    contentUri,
+                    projection,
+                    selection,
+                    selectionArgs,
+                    sortOrder
+            )).get();
+        } catch (ExecutionException | InterruptedException e) {
 
-    private static NeedsCursor activity;
-
-    private static Uri contentUri;
-
-    private static String [] projection;
-
-    private static String selection;
-
-    private static String[] selectionArgs;
-
-    private static String sortOrder;
-
-    public static synchronized MediaStoreCursorLoader getInstance() {
-        if (instance == null) {
-            instance = new MediaStoreCursorLoader();
         }
-        return instance;
-    }
-
-    public void setCursor(NeedsCursor activity, @NonNull Uri contentUri, @Nullable String [] projection,
-                                              @Nullable String selection, @Nullable String[] selectionArgs,
-                                              @Nullable String sortOrder) {
-
-        MediaStoreCursorLoader.activity = activity;
-        MediaStoreCursorLoader.contentUri = contentUri;
-        MediaStoreCursorLoader.projection = projection;
-        MediaStoreCursorLoader.selection = selection;
-        MediaStoreCursorLoader.selectionArgs = selectionArgs;
-        MediaStoreCursorLoader.sortOrder = sortOrder;
-        LoaderManager loaderManager = LoaderManager.getInstance((AppCompatActivity) activity);
-        if (loader != null) {
-            loaderManager.restartLoader(MEDIASTORE_LOADER_ID, null, instance);
-            Log.i("MediaStoreCursorLoader", "Existing loader; Started loading");
-        } else {
-            Log.i("MediaStoreCursorLoader", "No existing loader; Initialising...");
-            loaderManager.initLoader(MEDIASTORE_LOADER_ID, null, instance);
-        }
-    }
-
-    @NonNull
-    @Override
-    public Loader<Cursor> onCreateLoader(int id, @Nullable Bundle args) {
-        Log.i("MediaStoreCursorLoader", "Creating CursorLoader");
-        Log.i("MediaStoreCursorLoader", "Content URI: " + contentUri.toString());
-        Log.i("MediaStoreCursorLoader", "Projection[1]:" + projection[1]);
-        Log.i("MediaStoreCursorLoader", "Selection: " + selection);
-        return new CursorLoader(
-                (AppCompatActivity) MediaStoreCursorLoader.activity,
-                MediaStoreCursorLoader.contentUri,
-                MediaStoreCursorLoader.projection,
-                MediaStoreCursorLoader.selection,
-                MediaStoreCursorLoader.selectionArgs,
-                MediaStoreCursorLoader.sortOrder
-        );
-    }
-
-    @Override
-    public void onLoadFinished(@NonNull Loader<Cursor> loader, Cursor data) {
-        Log.i("MediaStoreCursorLoader", "Cursor finished");
-        MediaStoreCursorLoader.loader = loader;
-        activity.setCursor(data);
-        Log.i("MediaStoreCursorLoader", "Cursor has been sent");
-    }
-
-    @Override
-    public void onLoaderReset(@NonNull Loader<Cursor> loader) {
-        Log.i("MediaStoreCursorLoader", "Loader has been reset");
-        activity.setCursor(null);
-    }
-
-    public interface NeedsCursor {
-
-        void setCursor(Cursor cursor);
-
+        return data;
     }
 }
