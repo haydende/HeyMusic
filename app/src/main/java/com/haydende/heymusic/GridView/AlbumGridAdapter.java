@@ -1,5 +1,6 @@
 package com.haydende.heymusic.GridView;
 
+import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.MediaStore;
@@ -15,6 +16,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.haydende.heymusic.AlbumActivity.AlbumActivity;
 import com.haydende.heymusic.R;
 
 import java.util.concurrent.ExecutionException;
@@ -49,6 +51,7 @@ implements GridAdapter {
     @Override
     public void onBindViewHolder(@NonNull AlbumViewHolder holder, int position) {
         String title = null;
+        Intent albumActivity = new Intent(activity, AlbumActivity.class);
         try {
             Glide.with(activity)
                     .load(threadPool.submit(() -> getAlbumCover(position)).get())
@@ -62,6 +65,34 @@ implements GridAdapter {
             Log.i("AlbumGridAdapter", "No album art found");
         }
         holder.getTextView().setText((title == null) ? "Unknown" : title);
+
+        holder.getImageButton().setOnClickListener((View v) -> {
+            albumActivity.putExtra(
+                    "album_id",
+                    getAlbumID(position)
+            );
+            albumActivity.putExtra(
+                    "album_cover",
+                    getAlbumCover(position)
+            );
+            albumActivity.putExtra(
+                    "album_name",
+                    getAlbumName(position)
+            );
+            albumActivity.putExtra(
+                    "artist_name",
+                    getArtistName(position)
+            );
+            albumActivity.putExtra(
+                    "first_year",
+                    getFirstYear(position)
+            );
+            albumActivity.putExtra(
+                    "num_songs",
+                    getNumOfTracks(position)
+            );
+            activity.startActivity(albumActivity);
+        });
     }
 
     @Override
@@ -135,6 +166,15 @@ implements GridAdapter {
         }
     }
 
+    private String getAlbumID(int position) {
+        mediaStoreCursor.moveToPosition(position);
+        return mediaStoreCursor.getString(
+                mediaStoreCursor.getColumnIndex(
+                        MediaStore.Audio.Albums._ID
+                )
+        );
+    }
+
     /**
      * Method for getting the name for the album at the specified position in the {@link #mediaStoreCursor}.
      * @param position position for the {@link #mediaStoreCursor} to look in
@@ -145,6 +185,15 @@ implements GridAdapter {
         return mediaStoreCursor.getString(
                 mediaStoreCursor.getColumnIndex(
                         MediaStore.Audio.Albums.ALBUM
+                )
+        );
+    }
+
+    private String getArtistName(int position) {
+        mediaStoreCursor.moveToPosition(position);
+        return mediaStoreCursor.getString(
+                mediaStoreCursor.getColumnIndex(
+                        MediaStore.Audio.Albums.ARTIST
                 )
         );
     }
@@ -165,6 +214,34 @@ implements GridAdapter {
         Uri albumUri = Uri.parse(String.format("content://media/external/audio/albumart/%s", albumID));
         Log.i("AlbumGridAdapter", String.format("Cover art for album %d: %s", position, albumUri));
         return albumUri;
+    }
+
+    /**
+     * Method for getting the first year value from the mediaStoreCursor.
+     * @param position Position for the mediaStoreCursor to look in
+     * @return first year of release value as a String
+     */
+    private String getFirstYear(int position) {
+        mediaStoreCursor.moveToPosition(position);
+        return mediaStoreCursor.getString(
+                mediaStoreCursor.getColumnIndex(
+                        MediaStore.Audio.Albums.FIRST_YEAR
+                )
+        );
+    }
+
+    /**
+     * Method for getting the number of tracks in this album.
+     * @param position Position for the mediaStoreCursor to look in
+     * @return Number of tracks as a String
+     */
+    private String getNumOfTracks(int position) {
+        mediaStoreCursor.moveToPosition(position);
+        return mediaStoreCursor.getString(
+                mediaStoreCursor.getColumnIndex(
+                        MediaStore.Audio.Albums.NUMBER_OF_SONGS
+                )
+        );
     }
 
 }
