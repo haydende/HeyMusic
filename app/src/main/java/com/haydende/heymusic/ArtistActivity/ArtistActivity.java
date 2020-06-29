@@ -1,4 +1,4 @@
-package com.haydende.heymusic.Views;
+package com.haydende.heymusic.ArtistActivity;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -6,11 +6,11 @@ import android.os.Bundle;
 
 import com.haydende.heymusic.R;
 
-public class AlbumActivity extends AppCompatActivity {
+public class ArtistActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.album_activity);
+        setContentView(R.layout.artist_activity);
     }
 }
