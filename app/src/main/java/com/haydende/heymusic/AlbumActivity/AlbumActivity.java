@@ -1,6 +1,7 @@
 package com.haydende.heymusic.AlbumActivity;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.database.Cursor;
@@ -41,6 +42,7 @@ public class AlbumActivity extends AppCompatActivity {
             Media.ARTIST_ID,
             Media.ALBUM_ID,
             Media.ARTIST,
+            Media.TRACK,
             Media.TITLE,
             Media.DURATION
     };
@@ -68,13 +70,23 @@ public class AlbumActivity extends AppCompatActivity {
         String numSongs = extras.getString("num_songs");
         String year = extras.getString("first_year");
 
+        // ImageView
         coverArt = findViewById(R.id.AlbumView_coverImage);
+
+        // TextViews
         album = findViewById(R.id.AlbumView_albumName);
         artist = findViewById(R.id.AlbumView_artistName);
         songsHeader = findViewById(R.id.AlbumView_SongsHeader);
+
+        // Song Items RecyclerView
         songItemsRV = findViewById(R.id.AlbumView_SongItemRV);
+        AlbumActivityAdapter songItemAdapter = new AlbumActivityAdapter(this);
+        songItemsRV.setAdapter(songItemAdapter);
+        songItemsRV.setLayoutManager(new GridLayoutManager(this, 1));
+
+        // Other Albums RecyclerView
         otherAlbumsHeader = findViewById(R.id.AlbumView_OtherAlbumsHeader);
-        otherAlbumsRV = findViewById(R.id.AbumView_OtherAlbumsRV);
+        otherAlbumsRV = findViewById(R.id.AlbumView_OtherAlbumsRV);
 
         Glide.with(this)
                 .load(albumCover)
@@ -97,6 +109,7 @@ public class AlbumActivity extends AppCompatActivity {
                 )
         );
 
+        // Create Cursor to be used by the songItemAdapter
         Cursor songItemsCursor = getCursor(
                 this,
                 Media.EXTERNAL_CONTENT_URI,
@@ -105,6 +118,9 @@ public class AlbumActivity extends AppCompatActivity {
                 null,
                 null
         );
+        songItemAdapter.changeCursor(songItemsCursor);
+
+
 
 
         // Cursor otherAlbumsCursor = getCursor();
