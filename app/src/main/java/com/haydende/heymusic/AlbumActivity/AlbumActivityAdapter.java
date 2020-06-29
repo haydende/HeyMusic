@@ -2,11 +2,16 @@ package com.haydende.heymusic.AlbumActivity;
 
 import android.app.Activity;
 import android.database.Cursor;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
+import static android.provider.MediaStore.Audio.Media;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.haydende.heymusic.R;
 
 public class AlbumActivityAdapter extends RecyclerView.Adapter<AlbumActivityAdapter.AlbumActivityViewHolder> {
 
@@ -21,12 +26,19 @@ public class AlbumActivityAdapter extends RecyclerView.Adapter<AlbumActivityAdap
     @NonNull
     @Override
     public AlbumActivityAdapter.AlbumActivityViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return null;
+        View view = LayoutInflater.from(parent.getContext()).inflate(
+                        R.layout.song_list_item,
+                        parent,
+                        false
+                );
+        return new AlbumActivityViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull AlbumActivityAdapter.AlbumActivityViewHolder holder, int position) {
-
+        holder.getTrackNumber().setText(getTrackNumber(position));
+        holder.getTrackName().setText(getTrackName(position));
+        holder.getTrackDuration().setText(getTrackDuration(position));
     }
 
     @Override
@@ -36,20 +48,72 @@ public class AlbumActivityAdapter extends RecyclerView.Adapter<AlbumActivityAdap
 
     public static class AlbumActivityViewHolder extends RecyclerView.ViewHolder {
 
-        public AlbumActivityViewHolder(@NonNull View itemView) {
+        private final TextView trackNumber;
+
+        private final TextView trackName;
+
+        private final TextView trackDuration;
+
+        public AlbumActivityViewHolder(View itemView) {
             super(itemView);
+            trackNumber = itemView.findViewById(R.id.songListItem_trackNum);
+            trackName = itemView.findViewById(R.id.songListItem_trackName);
+            trackDuration = itemView.findViewById(R.id.songListItem_trackDuration);
         }
+
+        public TextView getTrackNumber() {
+            return trackNumber;
+        }
+
+        public TextView getTrackName() {
+            return trackName;
+        }
+
+        public TextView getTrackDuration() {
+            return trackDuration;
+        }
+
+    }
+
+    private String getTrackNumber(int position) {
+        mCursor.moveToPosition(position);
+        return mCursor.getString(
+                mCursor.getColumnIndex(
+                        Media.TRACK
+                )
+        );
+    }
+
+    private String getTrackName(int position) {
+        mCursor.moveToPosition(position);
+        return mCursor.getString(
+                mCursor.getColumnIndex(
+                        Media.TITLE
+                )
+        );
+    }
+
+    private String getTrackDuration(int position) {
+        mCursor.moveToPosition(position);
+        return mCursor.getString(
+                mCursor.getColumnIndex(
+                        Media.DURATION
+                )
+        );
     }
 
     private Cursor swapCursor(Cursor newCursor) {
-        return (newCursor == mCursor) ? null : mCursor;
+        if (mCursor == newCursor) return null;
+        Cursor oldCursor = mCursor;
+        this.mCursor = newCursor;
+        if (mCursor != null) this.notifyDataSetChanged();
+        return oldCursor;
     }
 
     public void changeCursor(Cursor newCursor) {
         Cursor oldCursor = swapCursor(newCursor);
         if (oldCursor != null) {
             oldCursor.close();
-            mCursor = newCursor;
         }
     }
 }
