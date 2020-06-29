@@ -5,4 +5,5 @@
     <string name="songs_header">Songs: %s</string>
     <string name="other_albums_header">Other Albums by %s</string>
     <string name="artist_name">Artist Name</string>
+    <string name="track_name">Track Name</string>
 </resources>
