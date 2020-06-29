@@ -45,16 +45,6 @@
         app:layout_constraintEnd_toEndOf="parent"/>
 
     <TextView
-        android:id="@+id/AlbumView.biography"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textSize="12sp"
-        android:text="@string/bio_placeholder"
-        android:padding="2.5dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/AlbumView.albumName"/>
-    <TextView
         android:id="@+id/AlbumView.SongsHeader"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -63,7 +53,7 @@
         android:padding="2.5dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/AlbumView.biography"/>
+        app:layout_constraintTop_toBottomOf="@id/AlbumView.albumName"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/AlbumView.SongItemRV"
