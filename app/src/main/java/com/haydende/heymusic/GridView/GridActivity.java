@@ -62,7 +62,9 @@ public class GridActivity extends AppCompatActivity {
     private final static String[] albumProjection = {
             MediaStore.Audio.Albums._ID,
             MediaStore.Audio.Albums.ALBUM,
-            MediaStore.Audio.Albums.ALBUM_ART
+            MediaStore.Audio.Albums.ARTIST,
+            MediaStore.Audio.Albums.NUMBER_OF_SONGS,
+            MediaStore.Audio.Albums.FIRST_YEAR
     };
 
     /**
