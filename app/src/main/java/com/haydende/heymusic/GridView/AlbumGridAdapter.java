@@ -38,6 +38,7 @@ implements GridAdapter {
     private final AppCompatActivity activity;
 
     public AlbumGridAdapter(AppCompatActivity activity) {
+        Log.i("AlbumGridAdapter", "I have been called");
         this.activity = activity;
     }
 
@@ -151,6 +152,7 @@ implements GridAdapter {
         this.mediaStoreCursor = cursor;
         if (mediaStoreCursor != null) {
             this.notifyDataSetChanged();
+            Log.i("AlbumGridAdapter", "My Cursor has been changed");
         }
         return oldCursor;
     }
