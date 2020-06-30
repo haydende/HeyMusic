@@ -2,12 +2,14 @@ package com.haydende.heymusic.AlbumActivity;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -15,6 +17,7 @@ import static android.provider.MediaStore.Audio.Albums;
 import static android.provider.MediaStore.Audio.Media;
 
 import com.bumptech.glide.Glide;
+import com.haydende.heymusic.GridView.AlbumGridAdapter;
 import com.haydende.heymusic.R;
 
 import static com.haydende.heymusic.CursorManagement.MediaStoreCursorLoader.getCursor;
@@ -48,9 +51,11 @@ public class AlbumActivity extends AppCompatActivity {
     };
 
     private String[] otherAlbumsProjection = new String[] {
-            Albums.ARTIST_ID,
-            Albums.ALBUM_ID,
-            Albums.ALBUM
+            Albums._ID,
+            Albums.ALBUM,
+            Albums.ARTIST,
+            Albums.NUMBER_OF_SONGS,
+            Albums.FIRST_YEAR
     };
 
 
@@ -87,6 +92,13 @@ public class AlbumActivity extends AppCompatActivity {
         // Other Albums RecyclerView
         otherAlbumsHeader = findViewById(R.id.AlbumView_OtherAlbumsHeader);
         otherAlbumsRV = findViewById(R.id.AlbumView_OtherAlbumsRV);
+        AlbumGridAdapter albumGridAdapter = new AlbumGridAdapter(this);
+        otherAlbumsRV.setAdapter(albumGridAdapter);
+        otherAlbumsRV.setLayoutManager(new LinearLayoutManager(
+                this,
+                RecyclerView.HORIZONTAL,
+                false
+        ));
 
         Glide.with(this)
                 .load(albumCover)
@@ -120,10 +132,20 @@ public class AlbumActivity extends AppCompatActivity {
         );
         songItemAdapter.changeCursor(songItemsCursor);
 
+        Cursor otherAlbumsCursor = getCursor(
+                this,
+                Albums.EXTERNAL_CONTENT_URI,
+                otherAlbumsProjection,
+                Albums.ARTIST + " = " + "\"" + artistName + "\"",
+                null,
+                null
+        );
 
+        /*Log.i("AlbumActivity",
+                String.format("Cursor row count: %d", otherAlbumsCursor.getCount())
+        );*/
 
-
-        // Cursor otherAlbumsCursor = getCursor();
+        albumGridAdapter.changeCursor(otherAlbumsCursor);
 
 
     }
