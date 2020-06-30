@@ -13,6 +13,7 @@ import androidx.loader.app.LoaderManager;
 import androidx.loader.content.CursorLoader;
 import androidx.loader.content.Loader;
 
+import java.util.Arrays;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
@@ -26,6 +27,21 @@ public class MediaStoreCursorLoader {
     public static Cursor getCursor(AppCompatActivity activity, @NonNull Uri contentUri,
                                    @Nullable String[] projection, @Nullable String selection,
                                    @Nullable String[] selectionArgs, @Nullable String sortOrder) {
+        Log.i("MediaStoreCursorLoader",
+                String.format(
+                        "I have been tasked to complete the following query: \n" +
+                        "URI: %s\n" +
+                        "Projection: %s\n" +
+                        "Selection: %s\n" +
+                        "Selection Args: %s\n" +
+                        "Sort Order: %s\n",
+                        contentUri,
+                        (projection == null) ? "null" : Arrays.toString(projection),
+                        selection,
+                        (selectionArgs == null) ? "null" : Arrays.toString(selectionArgs),
+                        sortOrder
+                )
+        );
         Cursor data = null;
         try {
             data = threadPool.submit(() -> activity.getContentResolver().query(
