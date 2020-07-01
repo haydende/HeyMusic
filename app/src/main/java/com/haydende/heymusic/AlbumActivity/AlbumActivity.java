@@ -42,9 +42,11 @@ public class AlbumActivity extends AppCompatActivity {
     };
 
     private String[] songsProjection = new String[] {
+            Media._ID,
             Media.ARTIST_ID,
-            Media.ALBUM_ID,
             Media.ARTIST,
+            Media.ALBUM_ID,
+            Media.ALBUM,
             Media.TRACK,
             Media.TITLE,
             Media.DURATION
@@ -132,6 +134,7 @@ public class AlbumActivity extends AppCompatActivity {
         );
         songItemAdapter.changeCursor(songItemsCursor);
 
+        // Create Cursor to be used by the OtherAlbumsAdapter
         Cursor otherAlbumsCursor = getCursor(
                 this,
                 Albums.EXTERNAL_CONTENT_URI,
@@ -140,13 +143,6 @@ public class AlbumActivity extends AppCompatActivity {
                 null,
                 null
         );
-
-        /*Log.i("AlbumActivity",
-                String.format("Cursor row count: %d", otherAlbumsCursor.getCount())
-        );*/
-
         albumGridAdapter.changeCursor(otherAlbumsCursor);
-
-
     }
 }
