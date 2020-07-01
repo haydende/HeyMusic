@@ -50,10 +50,10 @@ public class AlbumActivityAdapter extends RecyclerView.Adapter<AlbumActivityAdap
                     )
             );
 
-            nowPlayingActivity.putExtra("name", getTrackName(position));
             nowPlayingActivity.putExtra("uri", getTrackUri(position));
-            nowPlayingActivity.putExtra("album_name", getAlbumName(position));
+            nowPlayingActivity.putExtra("name", getTrackName(position));
             nowPlayingActivity.putExtra("album_id", getAlbumID(position));
+            nowPlayingActivity.putExtra("album_name", getAlbumName(position));
             nowPlayingActivity.putExtra("artist_name", getArtistName(position));
             mActivity.startActivity(nowPlayingActivity);
         });

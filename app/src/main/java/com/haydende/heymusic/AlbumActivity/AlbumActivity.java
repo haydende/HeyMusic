@@ -49,7 +49,10 @@ public class AlbumActivity extends AppCompatActivity {
             Media.ALBUM,
             Media.TRACK,
             Media.TITLE,
-            Media.DURATION
+            Media.DURATION,
+            Media.DISPLAY_NAME,
+            Media.RELATIVE_PATH,
+            Media.VOLUME_NAME
     };
 
     private String[] otherAlbumsProjection = new String[] {
@@ -133,6 +136,30 @@ public class AlbumActivity extends AppCompatActivity {
                 null
         );
         songItemAdapter.changeCursor(songItemsCursor);
+
+        songItemsCursor.moveToPosition(1);
+        Log.i("AlbumActivity",
+                String.format(
+                        "Row 0: Display Name: %s\n " +
+                                "Volume Name: %s\n" +
+                                "Relative Path: %s\n",
+                            songItemsCursor.getString(
+                                    songItemsCursor.getColumnIndex(
+                                            "_display_name"
+                                    )
+                            ),
+                            songItemsCursor.getString(
+                                    songItemsCursor.getColumnIndex(
+                                            Media.VOLUME_NAME
+                                    )
+                            ),
+                            songItemsCursor.getString(
+                                    songItemsCursor.getColumnIndex(
+                                            Media.RELATIVE_PATH
+                                    )
+                            )
+                )
+        );
 
         // Create Cursor to be used by the OtherAlbumsAdapter
         Cursor otherAlbumsCursor = getCursor(

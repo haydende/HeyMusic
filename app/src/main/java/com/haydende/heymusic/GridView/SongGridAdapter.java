@@ -69,10 +69,6 @@ implements GridAdapter {
                 newTrackAttributes.put("Album", getAlbumName(position));
                 newTrackAttributes.put("Artist", getArtistName(position));
                 newTrackAttributes.put("Data", getData(position));
-
-                NowPlayingActivity.setTrackAttributes(newTrackAttributes);
-                NowPlayingActivity.setAlbumCover(getAlbumCover(position));
-                NowPlayingActivity.setContentUri(getUri(position));
             }).start();
 
             // start the activity
