@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -55,6 +56,7 @@ public class AlbumActivityAdapter extends RecyclerView.Adapter<AlbumActivityAdap
             nowPlayingActivity.putExtra("album_id", getAlbumID(position));
             nowPlayingActivity.putExtra("album_name", getAlbumName(position));
             nowPlayingActivity.putExtra("artist_name", getArtistName(position));
+            nowPlayingActivity.putExtra("data", getData(position));
             mActivity.startActivity(nowPlayingActivity);
         });
         holder.getTrackNumber().setText(getTrackNumber(position));
@@ -202,6 +204,22 @@ public class AlbumActivityAdapter extends RecyclerView.Adapter<AlbumActivityAdap
         return mCursor.getString(
                 mCursor.getColumnIndex(
                         Media.ARTIST
+                )
+        );
+    }
+
+    /**
+     * Method for getting the DATA column header from the Cursor for the track at
+     * {@code position}
+     *
+     * @param position int position for the record to go to in the mediaStoreCursor
+     * @return String contents of the DATA column in the mediaStoreCursor
+     */
+    private String getData(int position) {
+        mCursor.moveToPosition(position);
+        return mCursor.getString(
+                mCursor.getColumnIndex(
+                        Media.DATA
                 )
         );
     }

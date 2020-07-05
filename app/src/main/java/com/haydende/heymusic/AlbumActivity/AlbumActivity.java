@@ -50,9 +50,7 @@ public class AlbumActivity extends AppCompatActivity {
             Media.TRACK,
             Media.TITLE,
             Media.DURATION,
-            Media.DISPLAY_NAME,
-            Media.RELATIVE_PATH,
-            Media.VOLUME_NAME
+            Media.DATA
     };
 
     private String[] otherAlbumsProjection = new String[] {

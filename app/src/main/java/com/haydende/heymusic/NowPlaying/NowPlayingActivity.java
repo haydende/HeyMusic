@@ -1,17 +1,9 @@
 package com.haydende.heymusic.NowPlaying;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
-import android.app.Activity;
-import android.graphics.Bitmap;
-import android.media.Image;
-import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.ParcelFileDescriptor;
-import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
@@ -19,7 +11,6 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.haydende.heymusic.MediaPlayerManager.MediaPlayerManager;
-import com.haydende.heymusic.GridView.SongGridAdapter;
 import com.haydende.heymusic.R;
 
 import org.jaudiotagger.audio.AudioFile;
@@ -31,29 +22,12 @@ import org.jaudiotagger.audio.exceptions.ReadOnlyFileException;
 import org.jaudiotagger.tag.TagException;
 
 import java.io.File;
-import java.io.FileDescriptor;
 import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.HashMap;
+
 
 public class NowPlayingActivity extends AppCompatActivity {
 
-    private Uri contentUri;
-
-    private String trackName;
-
-    private String albumID;
-
-    private String albumName;
-
-    private String artistName;
-
-    /**
-     * {@link HashMap} for the String values for track attributes that have been passed along by the
-     * {@link SongGridAdapter}
-     */
-    private static HashMap<String, String> trackAttributes;
+    private Bundle extras;
 
     private ImageButton shuffle;
     private ImageButton rewind;
@@ -65,13 +39,9 @@ public class NowPlayingActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.now_playing_activity);
-        Bundle extras = getIntent().getExtras();
+        extras = getIntent().getExtras();
 
-        contentUri = (Uri) extras.get("uri");
-        trackName = extras.getString("name");
-        albumID = extras.getString("album_id");
-        albumName = extras.getString("album_name");
-        artistName = extras.getString("artist_name");
+        Uri contentUri = (Uri) extras.get("uri");
 
         MediaPlayerManager.loadTrack(this, contentUri);
         fillLayout();
@@ -130,8 +100,8 @@ public class NowPlayingActivity extends AppCompatActivity {
      */
     public void fillLayout() {
         ImageButton albumCover = findViewById(R.id.nowPlayingData_coverImage);
-        TextView trackTitle = findViewById(R.id.nowPlayingData_trackName);
-        TextView albumTitle = findViewById(R.id.nowPlayingData_albumName);
+        TextView trackName = findViewById(R.id.nowPlayingData_trackName);
+        TextView albumName = findViewById(R.id.nowPlayingData_albumName);
         TextView artistName = findViewById(R.id.nowPlayingData_artistName);
 
         TextView fileFormat = findViewById(R.id.nowPlayingData_format);
@@ -140,12 +110,13 @@ public class NowPlayingActivity extends AppCompatActivity {
         TextView sampleRate = findViewById(R.id.nowPlayingData_sampleRate);
 
         Glide.with(this)
-                .load(Uri.parse("content://media/external/audio/albumart" + "/" + albumID))
+                .load(Uri.parse("content://media/external/audio/albumart/" +
+                        extras.getString("album_id")))
                 .override(600,600)
                 .into(albumCover);
-        trackTitle.setText(trackName);
-        albumTitle.setText(albumName);
-        artistName.setText(this.artistName);
+        trackName.setText(extras.getString("name"));
+        albumName.setText(extras.getString("album_name"));
+        artistName.setText(extras.getString("artist_name"));
 
         // get the metadata using the AudioFileIO API
         String formatString = "format";
@@ -154,14 +125,7 @@ public class NowPlayingActivity extends AppCompatActivity {
         String sampleRateString = "Sample Rate";
 
         try {
-            ParcelFileDescriptor file = getContentResolver().openFileDescriptor(
-                    contentUri,
-                    "r"
-            );
-            FileDescriptor fd = file.getFileDescriptor();
-            Log.i("NowPlayingActivity", "FileDescriptor: " + fd.toString());
-            String path = contentUri.toString();
-            AudioFile audioFile = AudioFileIO.read(new File(path));
+            AudioFile audioFile = AudioFileIO.read(new File(extras.getString("data")));
             AudioHeader header = audioFile.getAudioHeader();
 
             formatString = header.getFormat();
