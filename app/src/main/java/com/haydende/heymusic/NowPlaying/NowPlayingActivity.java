@@ -60,41 +60,36 @@ public class NowPlayingActivity extends AppCompatActivity {
         fillLayout();
 
         seekBar = findViewById(R.id.nowPlayingData_seekBar);
-        // position = findViewById(R.id.nowPlayingData_currentTime);
-        // duration = findViewById(R.id.nowPlayingData_duration);
+        position = findViewById(R.id.nowPlayingData_position);
+        duration = findViewById(R.id.nowPlayingData_duration);
         shuffle = findViewById(R.id.nowPlayingButtons_shuffle);
         rewind = findViewById(R.id.nowPlayingButtons_rewind);
         playPauseButton = findViewById(R.id.nowPlayingButtons_playPause);
         forward = findViewById(R.id.nowPlayingButtons_forward);
         repeat = findViewById(R.id.nowPlayingButtons_repeat);
 
-
+        // Create the new Executor (used for updating timer label and SeekBar)
         mExecutor = Executors.newSingleThreadScheduledExecutor();
-        mRunnable = () -> {
-            seekBar.setProgress(MediaPlayerManager.getPosition());
-            /*long milli = MediaPlayerManager.getPosition();
-            int minutes = (int)((milli / 1000) / 60);
-            int seconds = (int)((milli / 1000) % 60);
-            Log.i("NowPlayingAdapter", "Duration: " + minutes + ":" + seconds);
-            position.setText(minutes + ":" + seconds);*/
-        };
-
+        // Create the new Runnable (this will be executed by the Executor instance)
+        mRunnable = () -> seekBar.setProgress(MediaPlayerManager.getPosition());
+        // Load the track into the MediaPlayer
         MediaPlayerManager.loadTrack(this, contentUri);
+        // Set the Executor to start the Runnable every 50ms
+        mExecutor.scheduleAtFixedRate(mRunnable,0,50, TimeUnit.MILLISECONDS);
+        // Start playback of the track
+        MediaPlayerManager.togglePlayback();
+        // Populate the rest of the layout
         fillLayout();
 
-        mExecutor.scheduleAtFixedRate(
-                mRunnable,
-                0,
-                50,
-                TimeUnit.MILLISECONDS
-        );
-
-        MediaPlayerManager.togglePlayback();
-
+        // Get the duration of the track (ms)
         int milli = MediaPlayerManager.getDuration();
+        // Get the minute value
         int minutes = (int)((milli / 1000) / 60);
+        // Get the seconds value
         int seconds = (int)((milli / 1000) % 60);
+        // Set the text for the duration TextView (Formatted as mm:ss)
         duration.setText(String.format("%1$02d:%2$02d", minutes, seconds));
+        // Toggle the background image for the play button (this time it will become pause)
         togglePlayButton();
 
         /* Set the onClickListeners for the playback control buttons */

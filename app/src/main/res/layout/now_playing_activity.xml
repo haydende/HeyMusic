@@ -1,19 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".NowPlaying.NowPlayingActivity">
+    android:layout_width="match_parent">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:id="@+id/nowPlayingData"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="10dp">
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nowPlayingData"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="10dp">
 
         <ImageButton
             android:id="@+id/nowPlayingData.coverImage"
@@ -29,7 +26,7 @@
             android:padding="10dp" />
 
         <TextView
-            android:id="@+id/nowPlayingData.currentTime"
+            android:id="@+id/nowPlayingData.position"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="00:00:00"
@@ -38,6 +35,7 @@
             app:layout_constraintEnd_toStartOf="@id/nowPlayingData.seekBar"
             app:layout_constraintTop_toBottomOf="@id/nowPlayingData.coverImage"
             app:layout_constraintBottom_toTopOf="@id/nowPlayingData.trackName"/>
+
         <SeekBar
             android:id="@+id/nowPlayingData.seekBar"
             android:layout_width="wrap_content"
@@ -159,15 +157,13 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintVertical_bias="0.5"/>
 
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
 
     <LinearLayout
         android:id="@+id/nowPlayingButtons"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:minHeight="60dp"
-
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -214,5 +210,5 @@
             android:minWidth="60dp"
             android:minHeight="60dp" />
     </LinearLayout>
-
 </androidx.constraintlayout.widget.ConstraintLayout>
+
