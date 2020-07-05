@@ -61,18 +61,16 @@ implements GridAdapter {
     @Override
     public void onBindViewHolder(@NonNull SongGridAdapter.SongViewHolder holder, int position) {
         holder.getImageButton().setOnClickListener(v -> {
-            Intent nowPlaying = new Intent(activity, NowPlayingActivity.class);
+            Intent nowPlayingActivity = new Intent(activity, NowPlayingActivity.class);
 
-            new Thread(() -> {
-                nowPlaying.putExtra("name", getSongName(position));
-                nowPlaying.putExtra("uri", getUri(position));
-                nowPlaying.putExtra("album_name", getAlbumName(position));
-                nowPlaying.putExtra("album_id", getAlbumID(position));
-                nowPlaying.putExtra("data", getData(position));
-            }).start();
+            nowPlayingActivity.putExtra("uri", getUri(position));
+            nowPlayingActivity.putExtra("name", getSongName(position));
+            nowPlayingActivity.putExtra("album_id", getAlbumID(position));
+            nowPlayingActivity.putExtra("album_name", getAlbumName(position));
+            nowPlayingActivity.putExtra("artist_name", getArtistName(position));
+            nowPlayingActivity.putExtra("data", getData(position));
+            activity.startActivity(nowPlayingActivity);
 
-            // start the activity
-            activity.startActivity(nowPlaying);
         });
         Glide.with(activity)
                 .load(Uri.parse("content://media/external/audio/albumart/" + getAlbumID(position)))
