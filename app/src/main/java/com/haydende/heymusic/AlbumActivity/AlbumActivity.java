@@ -135,30 +135,6 @@ public class AlbumActivity extends AppCompatActivity {
         );
         songItemAdapter.changeCursor(songItemsCursor);
 
-        songItemsCursor.moveToPosition(1);
-        Log.i("AlbumActivity",
-                String.format(
-                        "Row 0: Display Name: %s\n " +
-                                "Volume Name: %s\n" +
-                                "Relative Path: %s\n",
-                            songItemsCursor.getString(
-                                    songItemsCursor.getColumnIndex(
-                                            "_display_name"
-                                    )
-                            ),
-                            songItemsCursor.getString(
-                                    songItemsCursor.getColumnIndex(
-                                            Media.VOLUME_NAME
-                                    )
-                            ),
-                            songItemsCursor.getString(
-                                    songItemsCursor.getColumnIndex(
-                                            Media.RELATIVE_PATH
-                                    )
-                            )
-                )
-        );
-
         // Create Cursor to be used by the OtherAlbumsAdapter
         Cursor otherAlbumsCursor = getCursor(
                 this,
