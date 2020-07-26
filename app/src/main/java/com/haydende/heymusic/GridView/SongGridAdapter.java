@@ -63,13 +63,11 @@ implements GridAdapter {
         holder.getImageButton().setOnClickListener(v -> {
             Intent nowPlaying = new Intent(activity, NowPlayingActivity.class);
 
-            new Thread(() -> {
-                nowPlaying.putExtra("name", getSongName(position));
-                nowPlaying.putExtra("uri", getUri(position));
-                nowPlaying.putExtra("album_name", getAlbumName(position));
-                nowPlaying.putExtra("album_id", getAlbumID(position));
-                nowPlaying.putExtra("data", getData(position));
-            }).start();
+            nowPlaying.putExtra("name", getSongName(position));
+            nowPlaying.putExtra("uri", getUri(position));
+            nowPlaying.putExtra("album_name", getAlbumName(position));
+            nowPlaying.putExtra("album_id", getAlbumID(position));
+            nowPlaying.putExtra("data", getData(position));
 
             // start the activity
             activity.startActivity(nowPlaying);
