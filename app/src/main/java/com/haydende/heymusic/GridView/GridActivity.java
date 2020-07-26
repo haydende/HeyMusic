@@ -23,24 +23,12 @@ import static com.haydende.heymusic.GridView.ItemType.ARTIST;
 import static com.haydende.heymusic.GridView.ItemType.ALBUM;
 import static com.haydende.heymusic.GridView.ItemType.SONG;
 
-public class GridActivity extends AppCompatActivity implements MediaStoreCursorLoader.NeedsCursor {
+public class GridActivity extends AppCompatActivity {
 
     /**
      * Used to capture user's permission response for READ_EXTERNAL_STORAGE_PERMISSION.
      */
     private final static int READ_EXTERNAL_STORAGE_PERMISSION = 0;
-
-    private final static MediaStoreCursorLoader mediaStoreCursorLoader = MediaStoreCursorLoader.getInstance();
-
-    /**
-     * ID for the MediaStore loader used to gather audio files.
-     */
-    private final static int MEDIASTORE_LOADER_ID = 0;
-
-    /**
-     * This is used to obtain the data from <code>MediaStore</code>.
-     */
-    private static Cursor mediaStoreCursor;
 
     private RecyclerView recyclerView;
 
@@ -74,7 +62,9 @@ public class GridActivity extends AppCompatActivity implements MediaStoreCursorL
     private final static String[] albumProjection = {
             MediaStore.Audio.Albums._ID,
             MediaStore.Audio.Albums.ALBUM,
-            MediaStore.Audio.Albums.ALBUM_ART
+            MediaStore.Audio.Albums.ARTIST,
+            MediaStore.Audio.Albums.NUMBER_OF_SONGS,
+            MediaStore.Audio.Albums.FIRST_YEAR
     };
 
     /**
@@ -146,7 +136,7 @@ public class GridActivity extends AppCompatActivity implements MediaStoreCursorL
             // if the permission has been granted...
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) ==
                     PackageManager.PERMISSION_GRANTED) {
-                createCursor();
+                setCursor(createCursor());
                 // if permission has not been granted
             } else {
                 // determine if the application should show a custom permission request
@@ -166,7 +156,7 @@ public class GridActivity extends AppCompatActivity implements MediaStoreCursorL
         }
     }
 
-    public void createCursor() {
+    public Cursor createCursor() {
         String selection = null;
         String[] selectionArgs = null;
         String sortOrder = null;
@@ -174,7 +164,7 @@ public class GridActivity extends AppCompatActivity implements MediaStoreCursorL
         Log.d("createCursor() method", "URI: " + getContentUri().toString());
         Log.d("createCursor() method", "Adapter Type: " + recyclerView.getAdapter());
         Log.i("GridActivity", "Calling for new Cursor");
-        mediaStoreCursorLoader.setCursor(
+        return MediaStoreCursorLoader.getCursor(
            this,
             getContentUri(),
             getProjection(),
@@ -184,7 +174,7 @@ public class GridActivity extends AppCompatActivity implements MediaStoreCursorL
         );
     }
 
-    public void setCursor(Cursor cursor) {
+    private void setCursor(Cursor cursor) {
         Log.i("GridAdapter", "New Cursor has been loaded");
         // Log.i("GridActivity", "New Cursor column 1: " + cursor.getColumnName(2));
         setGridAdapter();

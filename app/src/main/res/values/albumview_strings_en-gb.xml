@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">HeyMusic</string>
+    <string name="album_name">Album Name</string>
+    <string name="bio_placeholder">Biography text from external source goes here.</string>
+    <string name="songs_header">Songs: %s</string>
+    <string name="other_albums_header">Other Albums by %s</string>
+    <string name="artist_name">Artist Name</string>
+    <string name="track_name">Track Name</string>
+</resources>

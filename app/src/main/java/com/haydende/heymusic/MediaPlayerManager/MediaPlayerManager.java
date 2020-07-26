@@ -10,6 +10,14 @@ public class MediaPlayerManager {
 
     private static MediaPlayer mPlayer;
 
+    public static int getDuration() {
+        return (mPlayer == null) ? 0 : mPlayer.getDuration();
+    }
+
+    public static int getPosition() {
+        return mPlayer.getCurrentPosition();
+    }
+
     public static MediaPlayerManager getInstance() {
         if (instance == null)
             instance = new MediaPlayerManager();

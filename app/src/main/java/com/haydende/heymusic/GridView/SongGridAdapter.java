@@ -63,23 +63,17 @@ implements GridAdapter {
         holder.getImageButton().setOnClickListener(v -> {
             Intent nowPlaying = new Intent(activity, NowPlayingActivity.class);
 
-            new Thread(() -> {
-                HashMap<String, String> newTrackAttributes = new HashMap<>();
-                newTrackAttributes.put("Title", getSongName(position));
-                newTrackAttributes.put("Album", getAlbumName(position));
-                newTrackAttributes.put("Artist", getArtistName(position));
-                newTrackAttributes.put("Data", getData(position));
-
-                NowPlayingActivity.setTrackAttributes(newTrackAttributes);
-                NowPlayingActivity.setAlbumCover(getAlbumCover(position));
-                NowPlayingActivity.setContentUri(getUri(position));
-            }).start();
+            nowPlaying.putExtra("name", getSongName(position));
+            nowPlaying.putExtra("uri", getUri(position));
+            nowPlaying.putExtra("album_name", getAlbumName(position));
+            nowPlaying.putExtra("album_id", getAlbumID(position));
+            nowPlaying.putExtra("data", getData(position));
 
             // start the activity
             activity.startActivity(nowPlaying);
         });
         Glide.with(activity)
-                .load(getAlbumCover(position))
+                .load(Uri.parse("content://media/external/audio/albumart/" + getAlbumID(position)))
                 .centerCrop()
                 .override(320,320)
                 .into(holder.getImageButton());
@@ -187,17 +181,14 @@ implements GridAdapter {
      * @param position Position for the mediaStoreCursor to look in
      * @return Album cover to be used for ImageButton image
      */
-    private Uri getAlbumCover(int position) {
+    private String getAlbumID(int position) {
         Log.d("getAlbumCover", "Starting method... ");
         mediaStoreCursor.moveToPosition(position);
-        String albumID = mediaStoreCursor.getString(
+        return mediaStoreCursor.getString(
                 mediaStoreCursor.getColumnIndex(
                         MediaStore.Audio.Media.ALBUM_ID
                 )
         );
-        Uri artworkUri = Uri.parse("content://media/external/audio/albumart" + "/" + albumID);
-        Log.i("SongGridAdapter", String.format("Returning %s", artworkUri.toString()));
-        return artworkUri;
     }
 
     /**
