@@ -12,10 +12,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".Views.ArtistActivity"></activity>
-        <activity android:name=".Views.AlbumActivity" />
-        <activity android:name=".NowPlaying.NowPlayingActivity" />
-        <activity android:name=".GridView.GridActivity">
+        <activity android:name="com.haydende.heymusic.Activity.ArtistActivity"></activity>
+        <activity android:name="com.haydende.heymusic.Activity.AlbumActivity" />
+        <activity android:name="com.haydende.heymusic.Activity.NowPlayingActivity" />
+        <activity android:name="com.haydende.heymusic.Activity.GridActivity">
 
             <!-- Makes it so 'GridActivity' can be considered a launching activity -->
             <intent-filter>
