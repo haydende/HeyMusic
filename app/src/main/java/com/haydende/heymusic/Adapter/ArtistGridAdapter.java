@@ -1,4 +1,4 @@
-package com.haydende.heymusic.GridView;
+package com.haydende.heymusic.Adapter;
 
 import android.app.Activity;
 import android.database.Cursor;
@@ -13,7 +13,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
 import com.haydende.heymusic.R;
 
 import java.util.concurrent.ExecutionException;
@@ -21,7 +20,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 /**
- * Subclass of <code>RecyclerView</code>.<code>Adapter</code> that adapts the <code>artist</code>
+ * Subclass of <code>RecyclerView</code>.<code>com.haydende.heymusic.Adapter</code> that adapts the <code>artist</code>
  * data for use in UI components.
  */
 public class ArtistGridAdapter extends RecyclerView.Adapter<ArtistGridAdapter.ArtistViewHolder>

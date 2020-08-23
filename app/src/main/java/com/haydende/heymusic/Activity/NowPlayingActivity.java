@@ -1,6 +1,7 @@
-package com.haydende.heymusic.NowPlaying;
+package com.haydende.heymusic.Activity;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.net.Uri;
 import android.os.Bundle;
@@ -10,8 +11,10 @@ import android.widget.ImageButton;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
-import com.haydende.heymusic.MediaPlayerManager.MediaPlayerManager;
+import com.haydende.heymusic.Manager.MediaPlayerManager;
+
+import com.haydende.heymusic.Adapter.NowPlayingAdapter;
+import com.haydende.heymusic.Adapter.SongGridAdapter;
 import com.haydende.heymusic.R;
 
 import org.jaudiotagger.audio.AudioFile;
@@ -219,4 +222,3 @@ public class NowPlayingActivity extends AppCompatActivity {
     }
 
 }
-

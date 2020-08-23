@@ -7,7 +7,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".AlbumActivity.AlbumActivity">
+    tools:context="com.haydende.heymusic.Activity.AlbumActivity">
 
     <ImageView
         android:id="@+id/AlbumView.coverImage"

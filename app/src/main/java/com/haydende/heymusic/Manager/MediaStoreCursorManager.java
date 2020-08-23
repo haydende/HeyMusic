@@ -1,26 +1,18 @@
-package com.haydende.heymusic.CursorManagement;
+package com.haydende.heymusic.Manager;
 
 import android.database.Cursor;
 import android.net.Uri;
-import android.os.Bundle;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
-import androidx.loader.app.LoaderManager;
-import androidx.loader.content.CursorLoader;
-import androidx.loader.content.Loader;
 
 import java.util.Arrays;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 
-public class MediaStoreCursorLoader {
+public class MediaStoreCursorManager {
 
     private static ExecutorService threadPool = Executors.newFixedThreadPool(4);
 

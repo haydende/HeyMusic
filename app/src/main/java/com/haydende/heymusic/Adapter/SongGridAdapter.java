@@ -1,4 +1,4 @@
-package com.haydende.heymusic.GridView;
+package com.haydende.heymusic.Adapter;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -17,17 +17,13 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.haydende.heymusic.NowPlaying.NowPlayingActivity;
+import com.haydende.heymusic.Activity.NowPlayingActivity;
 import com.haydende.heymusic.R;
 
-import java.io.IOException;
 import java.util.HashMap;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 /**
- * Subclass of <code>RecyclerView</code>.<code>Adapter</code> that adapts the <code>Song</code>
+ * Subclass of <code>RecyclerView</code>.<code>com.haydende.heymusic.Adapter</code> that adapts the <code>Song</code>
  * data for use in UI components.
  */
 public class SongGridAdapter extends RecyclerView.Adapter<SongGridAdapter.SongViewHolder>
@@ -39,13 +35,13 @@ implements GridAdapter {
     private Cursor mediaStoreCursor;
 
     /**
-     * Instance of Activity that this class has been created in.
+     * Instance of com.haydende.heymusic.Activity that this class has been created in.
      */
     private final Activity activity;
 
     /**
      * Default constructor for this class.
-     * @param activity Activity instance this class was created in
+     * @param activity com.haydende.heymusic.Activity instance this class was created in
      */
     public SongGridAdapter(Activity activity) {
         this.activity = activity;

@@ -1,4 +1,4 @@
-package com.haydende.heymusic.GridView;
+package com.haydende.heymusic.Activity;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
@@ -16,12 +16,17 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
-import com.haydende.heymusic.CursorManagement.MediaStoreCursorLoader;
+import com.haydende.heymusic.Manager.MediaStoreCursorManager;
 import com.haydende.heymusic.R;
 
-import static com.haydende.heymusic.GridView.ItemType.ARTIST;
-import static com.haydende.heymusic.GridView.ItemType.ALBUM;
-import static com.haydende.heymusic.GridView.ItemType.SONG;
+import com.haydende.heymusic.Adapter.AlbumGridAdapter;
+import com.haydende.heymusic.Adapter.ArtistGridAdapter;
+import com.haydende.heymusic.Adapter.GridAdapter;
+import com.haydende.heymusic.Adapter.SongGridAdapter;
+
+import static com.haydende.heymusic.Activity.ItemType.ARTIST;
+import static com.haydende.heymusic.Activity.ItemType.ALBUM;
+import static com.haydende.heymusic.Activity.ItemType.SONG;
 
 public class GridActivity extends AppCompatActivity {
 
@@ -162,9 +167,9 @@ public class GridActivity extends AppCompatActivity {
         String sortOrder = null;
         setGridAdapter();
         Log.d("createCursor() method", "URI: " + getContentUri().toString());
-        Log.d("createCursor() method", "Adapter Type: " + recyclerView.getAdapter());
+        Log.d("createCursor() method", "com.haydende.heymusic.Adapter Type: " + recyclerView.getAdapter());
         Log.i("GridActivity", "Calling for new Cursor");
-        return MediaStoreCursorLoader.getCursor(
+        return MediaStoreCursorManager.getCursor(
            this,
             getContentUri(),
             getProjection(),
@@ -182,7 +187,7 @@ public class GridActivity extends AppCompatActivity {
     }
 
     private void setGridAdapter() {
-        Log.d("GridActivity", "Setting Adapter");
+        Log.d("GridActivity", "Setting com.haydende.heymusic.Adapter");
         switch (itemType) {
             case SONG:
                 gridAdapter = new SongGridAdapter(this);

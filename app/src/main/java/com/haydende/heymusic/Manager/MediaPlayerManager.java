@@ -1,4 +1,4 @@
-package com.haydende.heymusic.MediaPlayerManager;
+package com.haydende.heymusic.Manager;
 
 import android.content.Context;
 import android.media.MediaPlayer;

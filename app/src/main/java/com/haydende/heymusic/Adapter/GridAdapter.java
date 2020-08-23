@@ -1,4 +1,4 @@
-package com.haydende.heymusic.GridView;
+package com.haydende.heymusic.Adapter;
 
 import android.database.Cursor;
 

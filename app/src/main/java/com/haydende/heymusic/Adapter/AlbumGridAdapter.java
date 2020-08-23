@@ -1,4 +1,4 @@
-package com.haydende.heymusic.GridView;
+package com.haydende.heymusic.Adapter;
 
 import android.content.Intent;
 import android.database.Cursor;
@@ -24,7 +24,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 /**
- * Subclass of <code>RecyclerView</code>.<code>Adapter</code> that adapts the <code>Album</code>
+ * Subclass of <code>RecyclerView</code>.<code>com.haydende.heymusic.Adapter</code> that adapts the <code>Album</code>
  * data for use in UI components.
  */
 public class AlbumGridAdapter extends RecyclerView.Adapter<AlbumGridAdapter.AlbumViewHolder>
