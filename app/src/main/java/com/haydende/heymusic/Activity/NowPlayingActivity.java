@@ -12,6 +12,7 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.haydende.heymusic.Domain.Song;
 import com.haydende.heymusic.Manager.MediaPlayerManager;
 
 import com.haydende.heymusic.Adapter.NowPlayingAdapter;
@@ -60,7 +61,7 @@ public class NowPlayingActivity extends AppCompatActivity {
 
         Uri contentUri = (Uri) extras.get("uri");
 
-        MediaPlayerManager.loadTrack(this, contentUri);
+        MediaPlayerManager.loadCurrentTrack(this);
         fillLayout();
 
         seekBar = findViewById(R.id.nowPlayingData_seekBar);
@@ -76,8 +77,6 @@ public class NowPlayingActivity extends AppCompatActivity {
         mExecutor = Executors.newSingleThreadScheduledExecutor();
         // Create the new Runnable (this will be executed by the Executor instance)
         mRunnable = () -> seekBar.setProgress(MediaPlayerManager.getPosition());
-        // Load the track into the MediaPlayer
-        MediaPlayerManager.loadTrack(this, contentUri);
         // Set the Executor to start the Runnable every 50ms
         mExecutor.scheduleAtFixedRate(mRunnable,0,50, TimeUnit.MILLISECONDS);
         // Start playback of the track
@@ -185,6 +184,14 @@ public class NowPlayingActivity extends AppCompatActivity {
         artistName.setText(extras.getString("artist_name"));
 
         // get the metadata using the AudioFileIO API
+
+//        fileFormat.setText(formatString);
+//        bitRate.setText(bitRateString + "kb/s");
+//        bitDepth.setText(bitDepthInt + " bits");
+//        sampleRate.setText(sampleRateString + "KHz");
+    }
+
+    public Song makeSong() {
         String formatString = "format";
         int bitDepthInt = 16;
         String bitRateString = "BitRate";
@@ -203,6 +210,8 @@ public class NowPlayingActivity extends AppCompatActivity {
             Log.d("Sample Rate", header.getSampleRate());
             Log.d("Bit Depth", "" + header.getBitsPerSample());
             Log.d("Format", header.getFormat());
+
+            Song song;
         } catch (IOException ioE) {
 
         } catch (CannotReadException cnrE) {
@@ -216,10 +225,7 @@ public class NowPlayingActivity extends AppCompatActivity {
         } catch (NullPointerException npE) {
 
         }
-        fileFormat.setText(formatString);
-        bitRate.setText(bitRateString + "kb/s");
-        bitDepth.setText(bitDepthInt + " bits");
-        sampleRate.setText(sampleRateString + "KHz");
+        return null;
     }
 
 }
