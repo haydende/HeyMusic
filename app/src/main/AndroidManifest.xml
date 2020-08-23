@@ -13,7 +13,6 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name="com.haydende.heymusic.Activity.ArtistActivity"></activity>
-        <activity android:name="com.haydende.heymusic.Activity.AlbumActivity" />
         <activity android:name="com.haydende.heymusic.Activity.NowPlayingActivity" />
         <activity android:name="com.haydende.heymusic.Activity.GridActivity">
 

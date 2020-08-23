@@ -1,8 +1,5 @@
-<<<<<<< HEAD:app/src/main/java/com/haydende/heymusic/ArtistActivity/ArtistActivity.java
-package com.haydende.heymusic.ArtistActivity;
-=======
+
 package com.haydende.heymusic.Activity;
->>>>>>> reorganising-source:app/src/main/java/com/haydende/heymusic/Activity/ArtistActivity.java
 
 import androidx.appcompat.app.AppCompatActivity;
 

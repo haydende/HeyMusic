@@ -1,4 +1,4 @@
-package com.haydende.heymusic.AlbumActivity;
+package com.haydende.heymusic.Adapter;
 
 import android.app.Activity;
 import android.database.Cursor;

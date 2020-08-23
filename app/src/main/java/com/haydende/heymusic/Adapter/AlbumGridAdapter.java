@@ -16,7 +16,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.haydende.heymusic.AlbumActivity.AlbumActivity;
+import com.haydende.heymusic.Activity.AlbumActivity;
 import com.haydende.heymusic.R;
 
 import java.util.concurrent.ExecutionException;

@@ -11,6 +11,7 @@ import android.widget.ImageButton;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.haydende.heymusic.Manager.MediaPlayerManager;
 
 import com.haydende.heymusic.Adapter.NowPlayingAdapter;

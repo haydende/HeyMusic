@@ -1,10 +1,9 @@
-package com.haydende.heymusic.AlbumActivity;
+package com.haydende.heymusic.Adapter;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
-import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,7 +15,7 @@ import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.haydende.heymusic.NowPlaying.NowPlayingActivity;
+import com.haydende.heymusic.Activity.NowPlayingActivity;
 import com.haydende.heymusic.R;
 
 public class AlbumActivityAdapter extends RecyclerView.Adapter<AlbumActivityAdapter.AlbumActivityViewHolder> {
